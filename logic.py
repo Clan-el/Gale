@@ -6,22 +6,26 @@ class Game:
         self.playerA = "A"
         self.playerB = "B"
 
-    def get_grid(self):
-        return self._grid
+    def get_tile(self, point: tuple[int, int]):
+        return self._grid[point[0]][point[1]]
 
-    def change_tile(self, point, player):
+    def change_tile(self, point: tuple[int, int], player: str):
         x, y = point
         self._grid[x][y] = player
 
-    def check_near_connection(self, point, player):
+    def check_near_connection(self, point: tuple[int, int], player: str) -> list:
         i, j = point
         check_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
         neighbors = [(i + x, j + y) for x, y in check_list
                     if (0 <= i + x <= 12 and 0 <= j + y <= 12 and
                     self._grid[i + x][j + y] == player)]
         return neighbors
 
-    def check_win_connection(self, player, cords=None, checked=None):
+    def check_win_connection(self,
+                             player: str,
+                             cords=None,
+                             checked=None):
         if cords == None:
             i = 1
             j = 0
@@ -72,6 +76,5 @@ class Game:
 
 if __name__ == "__main__":
     game = Game()
-
     print(game.check_win_connection("A"))
     print(game.check_win_connection("B"))
