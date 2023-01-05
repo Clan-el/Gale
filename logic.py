@@ -14,7 +14,7 @@ pattern = [
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
 ]
 
-pattern2 = [
+patternA = [
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
   ['A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
@@ -22,7 +22,7 @@ pattern2 = [
   [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
   ['A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
   [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
-  ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
+  ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', None, 'A'],
   [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
   ['A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
   [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
@@ -30,9 +30,24 @@ pattern2 = [
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
 ]
 
+patternB = [
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', 'B', 'A', None, 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', 'B', 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', None, 'A', 'B', 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', 'B', 'B', 'B', 'B', 'B', 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', None, 'A', None, 'A', 'B', 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', None, 'A', None, 'A', 'B', 'A', None, 'A'],
+  [None, 'B', 'B', 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', 'B', 'A', None, 'A', None, 'A', None, 'A', 'B', 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', 'B', 'B', None],
+  ['A', 'B', 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+]
 
 
-def check_short_connection(point, pattern, player):
+def check_near_connection(point, pattern, player):
     neighbors = []
     i, j = point
     if j + 1 <= 12 and pattern[i][j+1] == player:
@@ -51,16 +66,22 @@ def check_connection(pattern, player, cords=None):
     if cords == None:
         i = 1
         j = 0
+        if player == 'B':
+            rotated = list(zip(*pattern))[::-1]
+            rotated = [list(elem) for elem in rotated]
+            pattern = rotated
     else:
         i = cords[0]
         j = cords[1]
 
     while True == True:
         print(i, j)
-        next_checks = check_short_connection((i, j), pattern, player)
+        next_checks = check_near_connection((i, j), pattern, player)
 
         if j == 0 and len(next_checks) == 0:
             i += 2
+            if i > 12:
+                return None
         elif j == 0 and len(next_checks) == 1:
             checked.append((i, j))
             i, j = next_checks[0]
@@ -73,6 +94,7 @@ def check_connection(pattern, player, cords=None):
             elif next_checks[1] not in checked:
                 i, j = next_checks[1]
             else:
+                print("tak dla testu")
                 return None
 
         elif j != 0 and (len(next_checks) == 3 or len(next_checks) == 4):
@@ -85,7 +107,6 @@ def check_connection(pattern, player, cords=None):
                         checked.append(next_checks[x])
 
         else:
-            print("coś nie działa")
             return None
 
         if j >= 11:
@@ -94,14 +115,16 @@ def check_connection(pattern, player, cords=None):
 
 
 
-
-# print(check_connection(pattern2, "A"))
+print(check_connection(patternB, "A"))
+print(check_connection(patternB, "B"))
 
 
 
 class Game:
     def __init__(self) -> None:
-        self.board = pattern2
+        self.board = patternB
         pass
 
-board = Game()
+    pass
+
+game = Game()
