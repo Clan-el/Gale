@@ -2,14 +2,23 @@ from grid import grid, gridA, gridB
 
 class Game:
     def __init__(self):
-        self.grid = gridA
+        self._grid = gridB
+        self.playerA = "A"
+        self.playerB = "B"
+
+    def get_grid(self):
+        return self._grid
+
+    def change_tile(self, point, player):
+        x, y = point
+        self._grid[x][y] = player
 
     def check_near_connection(self, point, player):
         i, j = point
-        neighbors = [(i + x, j + y) for x, y in [(0, 1), (1, 0),
-                    (0, -1), (-1, 0)]
+        check_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        neighbors = [(i + x, j + y) for x, y in check_list
                     if (0 <= i + x <= 12 and 0 <= j + y <= 12 and
-                    self.grid[i + x][j + y] == player)]
+                    self._grid[i + x][j + y] == player)]
         return neighbors
 
     def check_win_connection(self, player, cords=None, checked=None):
@@ -17,9 +26,9 @@ class Game:
             i = 1
             j = 0
             if player == 'B':
-                rotated = list(zip(*self.grid))[::-1]
+                rotated = list(zip(*self._grid))[::-1]
                 rotated = [list(elem) for elem in rotated]
-                self.grid = rotated
+                self._grid = rotated
         else:
             i, j = cords
 
@@ -61,7 +70,8 @@ class Game:
 
     pass
 
-game = Game()
+if __name__ == "__main__":
+    game = Game()
 
-print(game.check_win_connection("A"))
-print(game.check_win_connection("B"))
+    print(game.check_win_connection("A"))
+    print(game.check_win_connection("B"))
