@@ -1,15 +1,15 @@
 from grid import grid, gridA, gridB, gridB2
-import copy
+from copy import deepcopy
 
 class Game:
     def __init__(self, game_grid=None):
         if game_grid is None:
-            self._grid = copy.deepcopy(grid)
+            self._grid = deepcopy(grid)
         else:
-            self._grid = copy.deepcopy(game_grid)
+            self._grid = deepcopy(game_grid)
 
     def clear_grid(self):
-        self._grid = copy.deepcopy(grid)
+        self._grid = deepcopy(grid)
 
     def get_tile(self, point: tuple[int, int]):
         return self._grid[point[0]][point[1]]
