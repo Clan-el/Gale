@@ -72,6 +72,13 @@ class Game:
             if j >= 11:
                 return player
 
+    def check_win(self):
+        if self.check_win_connection("A") == "A":
+            return "A"
+        elif self.check_win_connection("B") == "B":
+            return "B"
+        else:
+            return None
     pass
 
 if __name__ == "__main__":
