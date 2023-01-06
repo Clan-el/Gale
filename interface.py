@@ -42,6 +42,20 @@ def clear_board():
     return board
 
 
+def endgame_box():
+    rect_width = 300
+    rect_height = 100
+    rect_x = (screen_width - rect_width) // 2
+    rect_y = (screen_height - rect_height) // 2
+    param = screen, green_color, (rect_x, rect_y, rect_width, rect_height)
+    pygame.draw.rect(*param)
+
+    text = f"Wygrał gracz {game.check_win()}"
+    draw_text(screen, text, 18, screen_width//2, screen_height//2-15)
+    text = "Kliknij aby kontynuować lub wyjdź"
+    draw_text(screen, text, 18, screen_width//2, screen_height//2+15)
+
+
 pygame.init()
 pygame.display.set_caption("Shannon switching - Gale")
 screen_width = 670
@@ -94,18 +108,7 @@ while running:
 
     if game.check_win():
         running = False
-        rect_width = 300
-        rect_height = 100
-        rect_x = (screen_width - rect_width) // 2
-        rect_y = (screen_height - rect_height) // 2
-        param = screen, green_color, (rect_x, rect_y, rect_width, rect_height)
-        pygame.draw.rect(*param)
-
-        text = f"Wygrał gracz {game.check_win()}"
-        draw_text(screen, text, 18, screen_width//2, screen_height//2-15)
-        text = "Kliknij aby kontynuować lub wyjdź"
-        draw_text(screen, text, 18, screen_width//2, screen_height//2+15)
-
+        endgame_box()
         pygame.display.update()
         while running is False:
             for event in pygame.event.get():
