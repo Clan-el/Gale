@@ -4,11 +4,10 @@ from logic import Game
 import grid
 
 pygame.init()
+pygame.display.set_caption("Shannon switching - Gale")
 screen_width = 670
 screen_height = 670
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Shannon switching - Gale")
-
 off_set = 10
 cell_size = 50
 circle_radious = 23
@@ -18,7 +17,7 @@ white_color = (255, 255, 255)
 black_color = (0, 0, 0)
 blue_color = (0, 0, 255)
 red_color = (255, 0, 0)
-grey_color = (100,100,100)
+grey_color = (100, 100, 100)
 screen.fill(white_color)
 
 # Initialize the board as a 2D array of white cells
@@ -26,9 +25,8 @@ board = []
 for _ in range(13):
     board.append([white_color] * 13)
 
-
-font_name = pygame.font.match_font("arial")
 def draw_text(surf, text, size, x, y):
+    font_name = pygame.font.match_font("arial")
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, black_color)
     text_rect = text_surface.get_rect()
@@ -36,10 +34,10 @@ def draw_text(surf, text, size, x, y):
     surf.blit(text_surface, text_rect)
 
 
-
-game = Game(grid.grid)
-times_clicked = 0  # moves
+game = Game(grid.gridA)
+moves = 0
 running = True
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -47,18 +45,21 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
+
             column = (mouse_x - off_set) // cell_size
             row = (mouse_y - off_set) // cell_size
-            if (cell_size + off_set <= mouse_x <= cell_size*12 + off_set and
-                cell_size + off_set <= mouse_y <= cell_size*12 + off_set and
-                game.get_tile((row, column)) is None):
-                if times_clicked % 2 == 0:
-                    game.change_tile((row, column), "A")
-                    times_clicked += 1
+            first_strip = cell_size + off_set
+            last_strip = cell_size*12 + off_set
 
-                elif times_clicked % 2 == 1:
+            if (first_strip < mouse_x < last_strip and
+                first_strip < mouse_y < last_strip and
+                game.get_tile((row, column)) is None):
+                moves += 1
+                if moves % 2 == 1:
+                    game.change_tile((row, column), "A")
+
+                elif moves % 2 == 0:
                     game.change_tile((row, column), "B")
-                    times_clicked += 1
 
 
     # Draw the board
@@ -85,11 +86,12 @@ while running:
     pygame.display.update()
 
     if game.check_win():
-        draw_text(screen, "Makarena", 18, screen_width//2, screen_height//2)
+        text = f"Wygrał gracz {game.check_win()}"
+        draw_text(screen, text, 18, screen_width//2, screen_height//2)
         pygame.display.update()
         while True:
             pass
-        # game = Game(grid.gridB2)
+
 
 pygame.quit()
 
