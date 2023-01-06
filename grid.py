@@ -30,6 +30,22 @@ gridA = [
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
 ]
 
+gridA2 = [
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', None, 'A', 'A', 'A', 'A', 'A', 'A', 'A', None, 'A'],
+  [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', None, 'A'],
+  [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', 'A', 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', None, 'A', 'A', 'A', 'A', 'A', 'A', 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+]
+
 gridB = [
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
   ['A', None, 'A', 'B', 'A', 'B', 'A', None, 'A', None, 'A', None, 'A'],
@@ -43,5 +59,21 @@ gridB = [
   ['A', 'B', 'A', None, 'A', None, 'A', None, 'A', 'B', 'A', None, 'A'],
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', 'B', 'B', None],
   ['A', 'B', 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+]
+
+gridB2 = [
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', 'B', 'A', None, 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', 'B', 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', None, 'A', 'B', 'A', None, 'A', None, 'A'],
+  [None, 'B', None, 'B', 'B', 'B', 'B', 'B', 'B', 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', None, 'A', None, 'A', 'B', 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', 'B', 'A', None, 'A', None, 'A', 'B', 'A', None, 'A'],
+  [None, 'B', 'B', 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
+  ['A', None, 'A', None, 'A', None, 'A', None, 'A', 'B', 'A', None, 'A'],
+  [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', 'B', 'B', None],
+  ['A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A', None, 'A'],
   [None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None, 'B', None],
 ]
