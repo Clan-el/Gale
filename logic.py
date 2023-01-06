@@ -3,8 +3,8 @@ from grid import grid, gridA, gridB
 class Game:
     def __init__(self):
         self._grid = gridB
-        self.playerA = "A"
-        self.playerB = "B"
+        # self.playerA = "A"
+        # self.playerB = "B"
 
     def get_tile(self, point: tuple[int, int]):
         return self._grid[point[0]][point[1]]
@@ -15,7 +15,7 @@ class Game:
 
     def check_near_connection(self, point: tuple[int, int], player: str) -> list:
         i, j = point
-        check_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        check_list = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 
         neighbors = [(i + x, j + y) for x, y in check_list
                     if (0 <= i + x <= 12 and 0 <= j + y <= 12 and
