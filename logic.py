@@ -1,4 +1,4 @@
-from grid import grid, gridA, gridB
+from grid import grid, gridA, gridB, gridB2
 
 class Game:
     def __init__(self, game_grid=None):
@@ -6,7 +6,6 @@ class Game:
 
     def get_tile(self, point: tuple[int, int]):
         return self._grid[point[0]][point[1]]
-        # return self._check_grid[point[0]][point[1]]
 
     def change_tile(self, point: tuple[int, int], player: str):
         x, y = point
@@ -36,8 +35,7 @@ class Game:
         checked = checked if checked is not None else []
 
         if cords == None:
-            i = 1
-            j = 0
+            i, j = 1, 0
             if player == 'B':
                 rotated = list(zip(*check_grid))[::-1]
                 rotated = [list(elem) for elem in rotated]
@@ -52,11 +50,14 @@ class Game:
                 i += 2
                 if i > 12:
                     return None
+
             elif j == 0 and len(next_checks) == 1:
                 checked.append((i, j))
                 i, j = next_checks[0]
+
             elif j != 0 and len(next_checks) == 1:
                 return None
+
             elif j != 0 and len(next_checks) == 2:
                 checked.append((i, j))
                 if next_checks[0] not in checked:
@@ -65,17 +66,22 @@ class Game:
                     i, j = next_checks[1]
                 else:
                     return None
+
             elif j != 0 and (3 <= len(next_checks) <= 4):
                 checked.append((i, j))
-                for x in range(len(next_checks)):
-                    if next_checks[x] not in checked:
-                        if (self.check_win_connection(player, check_grid,
-                            next_checks[x], checked) is not None):
+                for check in next_checks:
+                    if check not in checked:
+                        if self.check_win_connection(player,
+                                                     check_grid,
+                                                     check,
+                                                     checked):
                             return player
-                        else:
-                            checked.append(next_checks[x])
+                        checked.append(check)
+                return None
+
             else:
                 return None
+
             if j >= 11:
                 return player
 
@@ -84,9 +90,8 @@ class Game:
             return "A"
         elif self.check_win_connection("B") == "B":
             return "B"
-        else:
-            return None
-    pass
+        return None
+
 
 if __name__ == "__main__":
     game = Game(grid)
