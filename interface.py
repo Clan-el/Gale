@@ -5,15 +5,12 @@ from logic import Game
 game = Game()
 pygame.init()
 
-# Set the width and height of the screen
+
 screen_width = 660
 screen_height = 660
 screen = pygame.display.set_mode((screen_width, screen_height))
-
-# Set the title of the window
 pygame.display.set_caption("Shannon switching")
 
-# Set the dimensions of each cell on the board
 off_set = 10
 cell_size = 50
 circle_radious = 23
@@ -22,6 +19,7 @@ circle_radious = 23
 white_color = (255, 255, 255)
 blue_color = (0, 0, 255)
 red_color = (255, 0, 0)
+grey_color = (100,100,100)
 screen.fill(white_color)
 
 # Initialize the board as a 2D array of white cells
@@ -29,7 +27,9 @@ board = []
 for _ in range(13):
     board.append([white_color] * 13)
 
-# Run the game loop
+times_clicked = 0  # moves
+
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -38,13 +38,18 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            column = mouse_x // cell_size
-            row = mouse_y // cell_size
-            if (cell_size <= mouse_x <= cell_size*12 and
-                cell_size <= mouse_y <= cell_size*12 and
+            column = (mouse_x - off_set) // cell_size
+            row = (mouse_y - off_set) // cell_size
+            if (cell_size + off_set <= mouse_x <= cell_size*12 + off_set and
+                cell_size + off_set <= mouse_y <= cell_size*12 + off_set and
                 game.get_tile((row, column)) is None):
 
-                game.change_tile((row, column), "A")
+                if times_clicked % 2 == 0:
+                    game.change_tile((row, column), "A")
+                    times_clicked += 1
+                elif times_clicked % 2 == 1:
+                    game.change_tile((row, column), "B")
+                    times_clicked += 1
 
 
     # Draw the board
@@ -59,17 +64,14 @@ while running:
             y = i * cell_size + circle_radious + off_set
 
             if board[i][j] != white_color:
-                pygame.gfxdraw.filled_circle(screen, x, y,
-                                             circle_radious, board[i][j])
-                pygame.gfxdraw.aacircle(screen, x, y,
-                                        circle_radious, board[i][j])
+                drawing_arguments = screen, x, y, circle_radious, board[i][j]
+                pygame.gfxdraw.filled_circle(*drawing_arguments)
+                pygame.gfxdraw.aacircle(*drawing_arguments)
 
-            if (board[i][j] == white_color and
-                1<=i<=11 and 1<=j<=11):
-                pygame.gfxdraw.filled_circle(screen, x, y,
-                                             2, (100,100,100))
-                pygame.gfxdraw.aacircle(screen, x, y,
-                                             2, (100,100,100))
+            if (board[i][j] == white_color and 1<=i<=11 and 1<=j<=11):
+                pygame.gfxdraw.filled_circle(screen, x, y, 2, grey_color)
+                pygame.gfxdraw.aacircle(screen, x, y, 2, grey_color)
+
 
 
 
