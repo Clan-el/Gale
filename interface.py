@@ -119,6 +119,4 @@ while running:
                     screen.fill(white_color)
                     board = clear_board()
 
-
-
 pygame.quit()
