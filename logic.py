@@ -11,10 +11,10 @@ class Game:
     def clear_grid(self):
         self._grid = deepcopy(grid)
 
-    def get_tile(self, point: tuple[int, int]):
+    def get_cell(self, point: tuple[int, int]):
         return self._grid[point[0]][point[1]]
 
-    def change_tile(self, point: tuple[int, int], player: str):
+    def change_cell(self, point: tuple[int, int], player: str):
         x, y = point
         self._grid[x][y] = player
 
