@@ -10,6 +10,8 @@ def draw_text(surf, text, size, x, y):
     font_name = pygame.font.match_font("arial")
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, black_color)
+    # text_surface = font.render(text, True, white_color)
+
     text_rect = text_surface.get_rect()
     text_rect.center = (x, y)
     surf.blit(text_surface, text_rect)
@@ -18,9 +20,9 @@ def draw_text(surf, text, size, x, y):
 def draw_board(board):
     for i in range(13):
         for j in range(13):
-            if game.get_tile((i, j)) == "C":
+            if game.get_cell((i, j)) == "C":
                 board[i][j] = red_color
-            elif game.get_tile((i, j)) == "N":
+            elif game.get_cell((i, j)) == "N":
                 board[i][j] = blue_color
 
             x = j * cell_size + circle_radious + off_set
@@ -46,9 +48,11 @@ def endgame_box():
     rect_width, rect_height = 300, 100
     rect_x = (screen_width - rect_width) // 2
     rect_y = (screen_height - rect_height) // 2
-    param = screen, green_color, (rect_x, rect_y, rect_width, rect_height)
+    # param = screen, green_color, (rect_x, rect_y, rect_width, rect_height)
+    param = screen, light_grey_color, (rect_x, rect_y, rect_width, rect_height)
     pygame.draw.rect(*param)
-
+    param = screen, black_color, (rect_x, rect_y, rect_width, rect_height), 5
+    pygame.draw.rect(*param)
 
     winner = "Czerwony" if game.check_win() == "C" else "Niebieski"
     text = f"Wygrał gracz {winner}"
@@ -57,11 +61,8 @@ def endgame_box():
     draw_text(screen, text, 18, screen_width//2, screen_height//2+15)
 
 
-pygame.init()
-pygame.display.set_caption("Shannon switching - Gale")
-screen_width = 670
-screen_height = 670
-screen = pygame.display.set_mode((screen_width, screen_height))
+# Set the sizes
+screen_width, screen_height = 670, 670
 off_set = 10
 cell_size = 50
 circle_radious = 23
@@ -72,7 +73,13 @@ black_color = (0, 0, 0)
 blue_color = (0, 0, 255)
 red_color = (255, 0, 0)
 grey_color = (100, 100, 100)
-green_color = (0, 255, 0)
+light_grey_color = (175, 175, 175)
+# green_color = (0, 255, 0)
+
+
+pygame.init()
+pygame.display.set_caption("Shannon switching - Gale")
+screen = pygame.display.set_mode((screen_width, screen_height))
 screen.fill(white_color)
 
 
@@ -80,15 +87,15 @@ board = clear_board()
 game = Game(grid.gridB2)
 moves = 0
 running = True
+over = False
 
-while running:
+while running and not over:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-
             column = (mouse_x - off_set) // cell_size
             row = (mouse_y - off_set) // cell_size
             first_strip = cell_size + off_set
@@ -96,37 +103,39 @@ while running:
 
             if (first_strip < mouse_x < last_strip and
                 first_strip < mouse_y < last_strip and
-                game.get_tile((row, column)) is None):
+                game.get_cell((row, column)) is None):
 
                 moves += 1
                 if moves % 2 == 1:
-                    game.change_tile((row, column), "C")
+                    game.change_cell((row, column), "C")
                 else:
-                    game.change_tile((row, column), "N")
+                    game.change_cell((row, column), "N")
 
                     # correct = True
                     # while correct:
                     #     row, column = randint(1, 11), randint(1, 11)
-                    #     if game.get_tile((row, column)) is None:
-                    #         game.change_tile((row, column), "N")
+                    #     if game.get_cell((row, column)) is None:
+                    #         game.change_cell((row, column), "N")
                     #         correct = False
 
     draw_board(board)
     pygame.display.update()
 
     if game.check_win():
-        running = False
+        over = True
         endgame_box()
         pygame.display.update()
-        while running is False:
+
+        while over and running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    running = False
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     game.clear_grid()
                     moves = 0
                     running = True
+                    over = False
                     screen.fill(white_color)
                     board = clear_board()
 
