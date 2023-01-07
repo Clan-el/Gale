@@ -4,7 +4,7 @@ os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 from logic import Game
 import grid
-
+from random import randint
 
 def draw_text(surf, text, size, x, y):
     font_name = pygame.font.match_font("arial")
@@ -18,9 +18,9 @@ def draw_text(surf, text, size, x, y):
 def draw_board(board):
     for i in range(13):
         for j in range(13):
-            if game.get_tile((i, j)) == 'A':
+            if game.get_tile((i, j)) == "C":
                 board[i][j] = red_color
-            elif game.get_tile((i, j)) == 'B':
+            elif game.get_tile((i, j)) == "N":
                 board[i][j] = blue_color
 
             x = j * cell_size + circle_radious + off_set
@@ -43,14 +43,15 @@ def clear_board():
 
 
 def endgame_box():
-    rect_width = 300
-    rect_height = 100
+    rect_width, rect_height = 300, 100
     rect_x = (screen_width - rect_width) // 2
     rect_y = (screen_height - rect_height) // 2
     param = screen, green_color, (rect_x, rect_y, rect_width, rect_height)
     pygame.draw.rect(*param)
 
-    text = f"Wygrał gracz {game.check_win()}"
+
+    winner = "Czerwony" if game.check_win() == "C" else "Niebieski"
+    text = f"Wygrał gracz {winner}"
     draw_text(screen, text, 18, screen_width//2, screen_height//2-15)
     text = "Kliknij aby kontynuować lub wyjdź"
     draw_text(screen, text, 18, screen_width//2, screen_height//2+15)
@@ -76,7 +77,7 @@ screen.fill(white_color)
 
 
 board = clear_board()
-game = Game(grid.gridA2)
+game = Game(grid.gridB2)
 moves = 0
 running = True
 
@@ -99,9 +100,16 @@ while running:
 
                 moves += 1
                 if moves % 2 == 1:
-                    game.change_tile((row, column), "A")
+                    game.change_tile((row, column), "C")
                 else:
-                    game.change_tile((row, column), "B")
+                    game.change_tile((row, column), "N")
+
+                    # correct = True
+                    # while correct:
+                    #     row, column = randint(1, 11), randint(1, 11)
+                    #     if game.get_tile((row, column)) is None:
+                    #         game.change_tile((row, column), "N")
+                    #         correct = False
 
     draw_board(board)
     pygame.display.update()

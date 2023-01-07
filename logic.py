@@ -43,7 +43,7 @@ class Game:
 
         if cords == None:
             i, j = 1, 0
-            if player == 'B':
+            if player == "N":
                 rotated = list(zip(*check_grid))[::-1]
                 rotated = [list(elem) for elem in rotated]
                 check_grid = rotated
@@ -93,10 +93,10 @@ class Game:
                 return player
 
     def check_win(self):
-        if self.check_win_connection("A") == "A":
-            return "A"
-        elif self.check_win_connection("B") == "B":
-            return "B"
+        if self.check_win_connection("C") == "C":
+            return "C"
+        elif self.check_win_connection("N") == "N":
+            return "N"
         return None
 
 
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     game = Game(grid)
     gameA = Game(gridA)
     gameB = Game(gridB)
-    print(gameA.check_win_connection("A"))
-    print(gameB.check_win_connection("B"))
+    print(gameA.check_win_connection("C"))
+    print(gameB.check_win_connection("N"))
 
     print(gameA.check_win())
