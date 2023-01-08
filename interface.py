@@ -45,7 +45,6 @@ def clear_board():
 
 
 def endgame_box():
-    # rect_width, rect_height = 300, 100
     draw_box(320, 110)
 
     winner = "Czerwony" if game.check_win() == "C" else "Niebieski"
@@ -65,30 +64,25 @@ def draw_box(rect_width: int, rect_height: int):
     pygame.draw.rect(*param)
 
 
-def button(text, rectangle, offset):
-    rect_x, rect_y, rect_width, rect_height = rectangle
-    rect_y += offset
-    rectangle = rect_x, rect_y, rect_width, rect_height
-    pygame.draw.rect(screen, white, rectangle, 0, 20)
-    pygame.draw.rect(screen, black, rectangle, 2, 20)
-    draw_text(screen, text, 18, screen_width//2, screen_height//2+offset)
-    pass
+class Button:
+    def __init__(self, text:str, rectangle:tuple[int,int,int,int], offset:int):
+        rect_x, rect_y, rect_width, rect_height = rectangle
+        rect_y += offset
+        rectangle = rect_x, rect_y, rect_width, rect_height
+        pygame.draw.rect(screen, white, rectangle, 0, 20)
+        pygame.draw.rect(screen, black, rectangle, 2, 20)
 
+        draw_text(screen, text, 18, screen_width//2, screen_height//2+offset)
 
-def choose_mode_box():
-    draw_box(300, 300)
-    text = "Wybierz tryb gry:"
-    draw_text(screen, text, 18, screen_width//2, screen_height//2-100)
+        (self._rect_x, self._rect_y, self._rect_width,
+        self._rect_height) = rectangle
 
-    rect_width, rect_height = 210, 45
-    rect_x = (screen_width - rect_width) // 2
-    rect_y = (screen_height - rect_height) // 2 + 2
-    rectangle = (rect_x, rect_y, rect_width, rect_height)
-
-    button("2 Graczy", rectangle, -40)
-    button("vs Komputer - Łatwy", rectangle, +30)
-    button("vs Komputer - Trudny", rectangle, +100)
-
+    def inside(self, mouse: tuple[int, int]):
+        mouse_x, mouse_y = mouse
+        if self._rect_x < mouse_x < self._rect_x + self._rect_width:
+            if self._rect_y < mouse_y < self._rect_y + self._rect_height:
+                return True
+        return False
 
 
 # Set the sizes
@@ -103,8 +97,7 @@ black = (0, 0, 0)
 blue = (0, 0, 255)
 red = (255, 0, 0)
 grey = (100, 100, 100)
-light_grey = (175, 175, 175)
-# green = (0, 255, 0)
+light_grey = (190, 190, 190)
 
 
 pygame.init()
@@ -114,36 +107,49 @@ screen.fill(white)
 board = clear_board()
 game = Game(grid.gridB2)
 moves = 0
-running = True
-over = False
 LEFT = 1
 
 
-while running:
+stages = ("starting", "running", "over", "exit")
+current_stage = "starting"
+
+
+draw_box(300, 300)
+text = "Wybierz tryb gry:"
+draw_text(screen, text, 18, screen_width//2, screen_height//2-100)
+
+rect_width, rect_height = 210, 45
+rect_x = (screen_width - rect_width) // 2
+rect_y = (screen_height - rect_height) // 2 + 2
+rectangle = (rect_x, rect_y, rect_width, rect_height)
+
+Button1 = Button("2 Graczy", rectangle, -40)
+Button2 = Button("vs Komputer - Łatwy", rectangle, +30)
+Button3 = Button("vs Komputer - Trudny", rectangle, +100)
+pygame.display.update()
+
+while current_stage == stages[0]:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            # pygame.quit()
-            running = False
+            current_stage = stages[3]
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            running = False
 
-    choose_mode_box()
-    pygame.display.update()
-
-
-
+            if Button1.inside(pygame.mouse.get_pos()):
+                current_stage = stages[1]
+            elif Button2.inside(pygame.mouse.get_pos()):
+                print("BBB")
+            elif Button3.inside(pygame.mouse.get_pos()):
+                print("CCC")
 
 
 
 screen.fill(white)
-running = True
-running = False  # do usuniecia
-while running and not over:
+while current_stage == stages[1]:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            current_stage = stages[3]
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
             # event.button
@@ -167,20 +173,19 @@ while running and not over:
     pygame.display.update()
 
     if game.check_win():
-        over = True
-        endgame_box()
+        current_stage = stages[2]
+        ggg = endgame_box()
         pygame.display.update()
 
-        while over and running:
+        while current_stage == stages[2]:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    current_stage = stages[3]
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     game.clear_grid()
                     moves = 0
-                    running = True
-                    over = False
+                    current_stage = stages[1]
                     screen.fill(white)
                     board = clear_board()
 
