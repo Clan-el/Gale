@@ -2,9 +2,7 @@ import pygame, pygame.gfxdraw
 import os
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
-# from logic import Game
-# import grid
-# from random import randint
+from bot import easy_bot_move
 
 def draw_text(surf, text, size, x, y):
     font_name = pygame.font.match_font("arial")
@@ -40,6 +38,7 @@ class Interface:
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.screen.fill(white)
         self.game = game
+        self.board = self.clear_board()
 
     def draw_board(self, board):
         for i in range(13):
@@ -59,6 +58,7 @@ class Interface:
                 if (board[i][j] == white and 1<=i<=11 and 1<=j<=11):
                     pygame.gfxdraw.filled_circle(self.screen, x, y, 2, grey)
                     pygame.gfxdraw.aacircle(self.screen, x, y, 2, grey)
+        pygame.display.update()
 
 
     def clear_board(self):
@@ -74,7 +74,7 @@ class Interface:
         winner = "Czerwony" if self.game.check_win() == "C" else "Niebieski"
         text = f"Wygrał gracz {winner}"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2-15)
-        text = "Kliknij aby kontynuować lub wyjdź"
+        text = "Kliknij, aby kontynuować lub wyjdź"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2+15)
 
 
@@ -86,6 +86,7 @@ class Interface:
         pygame.draw.rect(*param)
         param = self.screen, black, rectangle, 5, 20
         pygame.draw.rect(*param)
+
 
     def choose_mode(self, current_stage):
         self.screen.fill(white)
@@ -111,16 +112,17 @@ class Interface:
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                     if Button1.inside(pygame.mouse.get_pos()):
                         return "running"
+                        # return "2_players"
                     elif Button2.inside(pygame.mouse.get_pos()):
-                        # return "AI-Eeasy"
+                        return "AI-Eeasy"
                         pass
                     elif Button3.inside(pygame.mouse.get_pos()):
                         # return "AI-Hard"
+
                         pass
-        # return "exit"
 
 
-    def playing(self, current_stage):
+    def play(self, current_stage):
         self.screen.fill(white)
         board = self.clear_board()
         moves = 0
@@ -147,10 +149,47 @@ class Interface:
                             self.game.change_cell((row, column), "N")
 
             self.draw_board(board)
-            pygame.display.update()
 
             if self.game.check_win():
                 return "over"
+
+
+    def ai_easy(self, current_stage):
+        self.screen.fill(white)
+        board = self.clear_board()
+        self.draw_board(board)
+        while current_stage == "AI-Eeasy":
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return "exit"
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    column = (mouse_x - offset) // cell_size
+                    row = (mouse_y - offset) // cell_size
+                    first_strip = cell_size + offset
+                    last_strip = cell_size*12 + offset
+
+                    if (first_strip < mouse_x < last_strip and
+                        first_strip < mouse_y < last_strip and
+                        self.game.get_cell((row, column)) is None):
+
+                        self.game.change_cell((row, column), "C")
+                        self.draw_board(board)
+
+                        if self.game.check_win():
+                            return "over"
+
+                        pygame.time.delay(1000)
+                        cell_cords = easy_bot_move(self.game)
+                        self.game.change_cell(cell_cords, "N")
+                        self.draw_board(board)
+
+                        if self.game.check_win():
+                            return "over"
+
+
+
 
     def over(self,current_stage):
         self.endgame_box()
@@ -167,9 +206,6 @@ class Interface:
 
     def close(self):
         pygame.quit()
-
-
-
 
 
 
