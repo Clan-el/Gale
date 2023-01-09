@@ -1,4 +1,4 @@
-from grid import grid, gridA, gridB, gridB2
+from grid import grid
 from copy import deepcopy
 
 class Game:
@@ -11,12 +11,12 @@ class Game:
     def clear_grid(self):
         self._grid = deepcopy(grid)
 
-    def get_cell(self, point: tuple[int, int]):
+    def get_cell(self, point: tuple[int, int]) -> str | None:
         return self._grid[point[0]][point[1]]
 
     def change_cell(self, point: tuple[int, int], player: str):
-        x, y = point
-        self._grid[x][y] = player
+        i, j = point
+        self._grid[i][j] = player
 
     def check_near_connection(self,
                               point: tuple[int, int],
@@ -36,9 +36,9 @@ class Game:
                              player: str,
                              check_grid=None,
                              cords=None,
-                             checked=None):
+                             checked=None) -> str | None:
 
-        check_grid = self._grid[:] if check_grid is None else check_grid
+        check_grid = deepcopy(self._grid) if check_grid is None else check_grid
         checked = checked if checked is not None else []
 
         if cords == None:
@@ -50,11 +50,12 @@ class Game:
         else:
             i, j = cords
 
+        last_i_0 = i
         while True:
             next_checks = self.check_near_connection((i, j), player, check_grid)
-
             if j == 0 and not next_checks:
                 i += 2
+                last_i_0 = i
                 if i > 12:
                     return None
 
@@ -63,7 +64,11 @@ class Game:
                 i, j = next_checks[0]
 
             elif j != 0 and len(next_checks) == 1:
-                return None
+                if last_i_0 == 11:
+                    return None
+                else:
+                    last_i_0 += 2
+                    i, j = last_i_0, 0
 
             elif j != 0 and len(next_checks) == 2:
                 checked.append((i, j))
@@ -72,7 +77,11 @@ class Game:
                 elif next_checks[1] not in checked:
                     i, j = next_checks[1]
                 else:
-                    return None
+                    if last_i_0 == 11:
+                        return None
+                    else:
+                        last_i_0 += 2
+                        i, j = last_i_0, 0
 
             elif j != 0 and (3 <= len(next_checks) <= 4):
                 checked.append((i, j))
@@ -84,27 +93,28 @@ class Game:
                                                      checked):
                             return player
                         checked.append(check)
-                return None
+                else:
+                    if last_i_0 == 11:
+                        return None
+                    else:
+                        last_i_0 += 2
+                        i, j = last_i_0, 0
 
             else:
-                return None
+                if last_i_0 == 11:
+                    return None
+                else:
+                    last_i_0 += 2
+                    i, j = last_i_0, 0
 
             if j >= 11:
                 return player
 
-    def check_win(self):
+
+
+    def check_win(self) -> str | None:
         if self.check_win_connection("C") == "C":
             return "C"
         elif self.check_win_connection("N") == "N":
             return "N"
         return None
-
-
-if __name__ == "__main__":
-    game = Game(grid)
-    gameA = Game(gridA)
-    gameB = Game(gridB)
-    print(gameA.check_win_connection("C"))
-    print(gameB.check_win_connection("N"))
-
-    print(gameA.check_win())
