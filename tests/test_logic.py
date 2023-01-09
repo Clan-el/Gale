@@ -3,6 +3,8 @@ sys.path.insert(0,'.')
 
 from grid import grid, gridA, gridB, gridB2
 from logic import Game
+from bot import easy_bot_move
+from interface import Interface
 
 
 def test_check_near_connection():
@@ -38,3 +40,55 @@ def test_check_win_A():
 def test_check_win_B():
     gameB = Game(gridB)
     assert gameB.check_win() == "N"
+
+
+def test_check_win_random():
+    """
+    Gra w Gale nie może zakończyć się remisem, któryś z graczy musi wygrać,
+    stąd test sprawdzający czy przez 101 rozgrywek z powodu błędu algorytmu
+    występuje remis, czyli game.check_win() == None
+    """
+    game = Game()
+    games = 0
+    while games <= 100:
+        i = 0
+        while i < 61 and game.check_win() is None:
+            if i == 58:
+                pass
+            player = "C" if i % 2 == 0 else "N"
+            cell_cords = easy_bot_move(game)
+            game.change_cell(cell_cords, player)
+            i += 1
+        print(game.check_win(), i)
+        if game.check_win() is None:
+            assert game.check_win() is not None
+        else:
+            game = Game()
+            games +=1
+    assert games == 101
+
+
+if __name__ == "__main__":
+    """
+    Analogiczne do test_check_win_random, ale z reprezentacją graficzną siatki
+    """
+    game = Game(grid)
+    games = 0
+    while games <= 100:
+        game.clear_grid()
+        i = 0
+        while i < 61 and game.check_win() is None:
+            player = "C" if i % 2 == 0 else "N"
+            cell_cords = easy_bot_move(game)
+            game.change_cell(cell_cords, player)
+            i += 1
+        print(game.check_win(), i)
+        if game.check_win() is None:
+            interface = Interface(game)
+            stage = "running"
+            while stage != "exit":
+                condition = stage == "running" or stage == "over"
+                stage = interface.play(stage) if condition else stage
+            interface.close()
+        else:
+            games +=1
