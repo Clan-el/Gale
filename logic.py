@@ -11,6 +11,9 @@ class Game:
     def clear_grid(self):
         self._grid = deepcopy(grid)
 
+    def get_grid(self) -> list[list[str|None]]:
+        return self._grid
+
     def get_cell(self, point: tuple[int, int]) -> str | None:
         return self._grid[point[0]][point[1]]
 
