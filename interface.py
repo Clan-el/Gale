@@ -4,7 +4,7 @@ os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 from bot import easy_bot_move
 
-def draw_text(surf, text, size, x, y):
+def draw_text(surf, text: str, size: int, x: int, y: int):
     font_name = pygame.font.match_font("arial")
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, black)
@@ -61,7 +61,7 @@ class Interface:
         pygame.display.update()
 
 
-    def clear_board(self):
+    def clear_board(self) -> list[list[str|None]]:
         board = []
         for _ in range(13):
             board.append([white] * 13)
@@ -88,7 +88,7 @@ class Interface:
         pygame.draw.rect(*param)
 
 
-    def choose_mode(self, current_stage):
+    def choose_mode(self, current_stage: str) -> str | None:
         self.screen.fill(white)
         self.draw_box(300, 300)
         text = "Wybierz tryb gry:"
@@ -120,7 +120,7 @@ class Interface:
                         pass
 
 
-    def play(self, current_stage):
+    def play(self, current_stage: str) -> str | None:
         self.screen.fill(white)
         board = self.clear_board()
         moves = 0
@@ -152,7 +152,7 @@ class Interface:
                 return "over"
 
 
-    def ai_easy(self, current_stage):
+    def ai_easy(self, current_stage: str) -> str | None:
         self.screen.fill(white)
         board = self.clear_board()
         self.draw_board(board)
@@ -189,7 +189,7 @@ class Interface:
 
 
 
-    def over(self,current_stage):
+    def over(self, current_stage: str) -> str | None:
         self.endgame_box()
         pygame.display.update()
 
@@ -220,7 +220,7 @@ class Button:
         (self._rect_x, self._rect_y, self._rect_width,
         self._rect_height) = rectangle
 
-    def inside(self, mouse: tuple[int, int]):
+    def inside(self, mouse: tuple[int, int]) -> bool:
         mouse_x, mouse_y = mouse
         if self._rect_x < mouse_x < self._rect_x + self._rect_width:
             if self._rect_y < mouse_y < self._rect_y + self._rect_height:
