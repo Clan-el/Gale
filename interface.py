@@ -102,7 +102,7 @@ class Interface:
         Button1 = Button(self.screen, "2 Graczy", rectangle, -40)
         Button2 = Button(self.screen, "vs Komputer - Łatwy", rectangle, +30)
         Button3 = Button(self.screen, "vs Komputer - Trudny", rectangle, +100)
-        pygame.display.update()
+        pygame.display.flip()
 
         while current_stage == "starting":
             for event in pygame.event.get():
@@ -114,11 +114,9 @@ class Interface:
                         return "running"
                         # return "2_players"
                     elif Button2.inside(pygame.mouse.get_pos()):
-                        return "AI-Eeasy"
-                        pass
+                        return "AI-Easy"
                     elif Button3.inside(pygame.mouse.get_pos()):
                         # return "AI-Hard"
-
                         pass
 
 
@@ -158,7 +156,7 @@ class Interface:
         self.screen.fill(white)
         board = self.clear_board()
         self.draw_board(board)
-        while current_stage == "AI-Eeasy":
+        while current_stage == "AI-Easy":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return "exit"

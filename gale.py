@@ -12,7 +12,7 @@ if __name__ == "__main__":
     while stage != "exit":
         stage = interface.choose_mode(stage) if stage == "starting" else stage
         stage = interface.play(stage) if stage == "running" else stage
-        stage = interface.ai_easy(stage) if stage == "AI-Eeasy" else stage
+        stage = interface.ai_easy(stage) if stage == "AI-Easy" else stage
         # ai hard
         stage = interface.over(stage) if stage == "over" else stage
 
