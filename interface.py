@@ -1,10 +1,13 @@
 import pygame, pygame.gfxdraw
-import os
-os.environ['SDL_AUDIODRIVER'] = 'dsp'
+# import os
+# os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 from bot import easy_bot_move
+from logic import Game
 
-def draw_text(surf, text: str, size: int, x: int, y: int):
+def draw_text(surf: pygame.surface.Surface, text: str,
+              size: int, x: int, y: int):
+
     font_name = pygame.font.match_font("arial")
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, black)
@@ -26,21 +29,23 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 blue = (0, 0, 255)
 red = (255, 0, 0)
+yellow = (255, 255, 0)
 grey = (100, 100, 100)
 light_grey = (190, 190, 190)
 
 
 
 class Interface:
-    def __init__(self, game) -> None:
-        pygame.init()
+    def __init__(self, game: Game) -> None:
+        pygame.display.init()
+        pygame.font.init()
         pygame.display.set_caption("Shannon switching - Gale")
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.screen.fill(white)
         self.game = game
         self.board = self.clear_board()
 
-    def draw_board(self, board):
+    def draw_board(self, board) -> None:
         for i in range(13):
             for j in range(13):
                 if self.game.get_cell((i, j)) == "C":
@@ -58,7 +63,7 @@ class Interface:
                 if (board[i][j] == white and 1<=i<=11 and 1<=j<=11):
                     pygame.gfxdraw.filled_circle(self.screen, x, y, 2, grey)
                     pygame.gfxdraw.aacircle(self.screen, x, y, 2, grey)
-        pygame.display.update()
+        pygame.display.flip()
 
 
     def clear_board(self) -> list[list[str|None]]:
@@ -68,7 +73,7 @@ class Interface:
         return board
 
 
-    def endgame_box(self):
+    def endgame_box(self) -> None:
         self.draw_box(320, 110)
 
         winner = "Czerwony" if self.game.check_win() == "C" else "Niebieski"
@@ -78,7 +83,7 @@ class Interface:
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2+15)
 
 
-    def draw_box(self, rect_width: int, rect_height: int):
+    def draw_box(self, rect_width: int, rect_height: int) -> None:
         rect_x = (screen_width - rect_width) // 2
         rect_y = (screen_height - rect_height) // 2
         rectangle = (rect_x, rect_y, rect_width, rect_height)
@@ -88,11 +93,15 @@ class Interface:
         pygame.draw.rect(*param)
 
 
-    def choose_mode(self, current_stage: str) -> str | None:
+    def choose_mode(self, stage: str) -> str:
         self.screen.fill(white)
         self.draw_box(300, 300)
+        text = "Witaj w GALE!"
+        draw_text(self.screen, text, 30, screen_width//2, screen_height//2-200)
         text = "Wybierz tryb gry:"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2-100)
+        text = "by Radosław Ślepowroński"
+        draw_text(self.screen, text, 18, screen_width//2, screen_height//2+300)
 
         rect_width, rect_height = 210, 45
         rect_x = (screen_width - rect_width) // 2
@@ -104,30 +113,31 @@ class Interface:
         Button3 = Button(self.screen, "vs Komputer - Trudny", rectangle, +100)
         pygame.display.flip()
 
-        while current_stage == "starting":
+        while stage == "starting":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return "exit"
 
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                     if Button1.inside(pygame.mouse.get_pos()):
-                        return "running"
-                        # return "2_players"
+                        return "2_players"
                     elif Button2.inside(pygame.mouse.get_pos()):
                         return "AI-Easy"
                     elif Button3.inside(pygame.mouse.get_pos()):
                         # return "AI-Hard"
                         pass
 
+        return "exit"
 
-    def play(self, current_stage: str) -> str | None:
+
+    def two_players(self, stage: str) -> str:
         self.screen.fill(white)
         board = self.clear_board()
         moves = 0
-        while current_stage == "running":
+        while stage == "2_players":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return "exit"
+                    stage = "exit"
 
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -151,17 +161,23 @@ class Interface:
             if self.game.check_win():
                 return "over"
 
+        return "exit"
 
-    def ai_easy(self, current_stage: str) -> str | None:
+
+    def ai_easy(self, stage: str) -> str:
         self.screen.fill(white)
         board = self.clear_board()
         self.draw_board(board)
-        while current_stage == "AI-Easy":
+        moves = 0
+        while stage == "AI-Easy":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return "exit"
+                    stage = "exit"
 
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+
+                elif (event.type == pygame.MOUSEBUTTONDOWN and
+                      event.button == LEFT):
+
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     column = (mouse_x - offset) // cell_size
                     row = (mouse_y - offset) // cell_size
@@ -179,28 +195,35 @@ class Interface:
                             return "over"
 
                         pygame.time.delay(1000)
-                        cell_cords = easy_bot_move(self.game)
+                        cell_cords = easy_bot_move(self.game.get_grid())
                         self.game.change_cell(cell_cords, "N")
                         self.draw_board(board)
 
                         if self.game.check_win():
                             return "over"
 
+        return "exit"
 
 
 
-    def over(self, current_stage: str) -> str | None:
+
+
+
+
+    def over(self, stage: str) -> str:
         self.endgame_box()
         pygame.display.update()
 
-        while current_stage == "over":
+        while stage == "over":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return "exit"
+                    stage = "exit"
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.game.clear_grid()
                     return "starting"
+
+        return "exit"
 
     def close(self):
         pygame.quit()
@@ -208,21 +231,28 @@ class Interface:
 
 
 class Button:
-    def __init__(self, screen, text:str, rectangle:tuple[int,int,int,int], offset:int):
+    def __init__(self, screen: pygame.surface.Surface, text: str,
+                 rectangle: tuple[int, int, int, int], offset: int):
+
         rect_x, rect_y, rect_width, rect_height = rectangle
         rect_y += offset
-        rectangle = rect_x, rect_y, rect_width, rect_height
-        pygame.draw.rect(screen, white, rectangle, 0, 20)
-        pygame.draw.rect(screen, black, rectangle, 2, 20)
+        self.rectangle = rect_x, rect_y, rect_width, rect_height
+        pygame.draw.rect(screen, white, self.rectangle, 0, 20)
+        self.gg = pygame.draw.rect(screen, black, self.rectangle, 2, 20)
 
         draw_text(screen, text, 18, screen_width//2, screen_height//2+offset)
-
-        (self._rect_x, self._rect_y, self._rect_width,
-        self._rect_height) = rectangle
+        self.screen = screen
+        self.text = text
+        self.offset = offset
 
     def inside(self, mouse: tuple[int, int]) -> bool:
-        mouse_x, mouse_y = mouse
-        if self._rect_x < mouse_x < self._rect_x + self._rect_width:
-            if self._rect_y < mouse_y < self._rect_y + self._rect_height:
-                return True
+        if self.gg.collidepoint(mouse):
+            pygame.draw.rect(self.screen, red, self.rectangle, 0, 20)
+            pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
+            draw_text(self.screen, self.text, 18, screen_width//2,
+                      screen_height//2+self.offset)
+
+            pygame.display.flip()
+            pygame.time.delay(333)
+            return True
         return False
