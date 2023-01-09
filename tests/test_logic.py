@@ -56,7 +56,7 @@ def test_check_win_random():
             if i == 58:
                 pass
             player = "C" if i % 2 == 0 else "N"
-            cell_cords = easy_bot_move(game)
+            cell_cords = easy_bot_move(game.get_grid())
             game.change_cell(cell_cords, player)
             i += 1
         print(game.check_win(), i)
@@ -79,16 +79,16 @@ if __name__ == "__main__":
         i = 0
         while i < 61 and game.check_win() is None:
             player = "C" if i % 2 == 0 else "N"
-            cell_cords = easy_bot_move(game)
+            cell_cords = easy_bot_move(game.get_grid())
             game.change_cell(cell_cords, player)
             i += 1
         print(game.check_win(), i)
         if game.check_win() is None:
             interface = Interface(game)
-            stage = "running"
+            stage = "2_players"
             while stage != "exit":
-                condition = stage == "running" or stage == "over"
-                stage = interface.play(stage) if condition else stage
+                condition = stage == "2_players" or stage == "over"
+                stage = interface.two_players(stage) if condition else stage
             interface.close()
         else:
             games +=1
