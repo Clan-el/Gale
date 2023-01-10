@@ -14,18 +14,18 @@ def test_check_near_connection():
 
 def test_check_connection_none():
     game = Game(grid)
-    assert game.check_win_connection("C", game._grid) == None
-    assert game.check_win_connection("N", game._grid) == None
+    assert game.check_win_connection("C") == False
+    assert game.check_win_connection("N") == False
 
 def test_check_connection_A():
     gameA = Game(gridA)
-    assert gameA.check_win_connection("C", gameA._grid) == "C"
-    assert gameA.check_win_connection("N", gameA._grid) == None
+    assert gameA.check_win_connection("C") == True
+    assert gameA.check_win_connection("N") == False
 
 def test_check_connection_B():
     gameB = Game(gridB)
-    assert gameB.check_win_connection("C") == None
-    assert gameB.check_win_connection("N") == "N"
+    assert gameB.check_win_connection("C") == False
+    assert gameB.check_win_connection("N") == True
 
 def test_check_win_none():
     game = Game(grid)
