@@ -8,6 +8,9 @@ class Game:
         else:
             self._grid = deepcopy(game_grid)
 
+        self.player1 = "C"
+        self.player2 = "N"
+
     def clear_grid(self):
         self._grid = deepcopy(grid)
 
@@ -39,14 +42,14 @@ class Game:
                              player: str,
                              check_grid=None,
                              cords=None,
-                             checked=None) -> str | None:
+                             checked=None) -> bool:
 
         check_grid = deepcopy(self._grid) if check_grid is None else check_grid
         checked = checked if checked is not None else []
 
         if cords == None:
             i, j = 1, 0
-            if player == "N":
+            if player == self.player2:
                 rotated = list(zip(*check_grid))[::-1]
                 rotated = [list(elem) for elem in rotated]
                 check_grid = rotated
@@ -60,7 +63,7 @@ class Game:
                 i += 2
                 last_i_0 = i
                 if i > 12:
-                    return None
+                    return False
 
             elif j == 0 and len(next_checks) == 1:
                 checked.append((i, j))
@@ -68,7 +71,7 @@ class Game:
 
             elif j != 0 and len(next_checks) == 1:
                 if last_i_0 == 11:
-                    return None
+                    return False
                 else:
                     last_i_0 += 2
                     i, j = last_i_0, 0
@@ -81,7 +84,7 @@ class Game:
                     i, j = next_checks[1]
                 else:
                     if last_i_0 == 11:
-                        return None
+                        return False
                     else:
                         last_i_0 += 2
                         i, j = last_i_0, 0
@@ -94,30 +97,30 @@ class Game:
                                                      check_grid,
                                                      check,
                                                      checked):
-                            return player
+                            return True
                         checked.append(check)
                 else:
                     if last_i_0 == 11:
-                        return None
+                        return False
                     else:
                         last_i_0 += 2
                         i, j = last_i_0, 0
 
             else:
                 if last_i_0 == 11:
-                    return None
+                    return False
                 else:
                     last_i_0 += 2
                     i, j = last_i_0, 0
 
             if j >= 11:
-                return player
+                return True
 
 
 
     def check_win(self) -> str | None:
-        if self.check_win_connection("C") == "C":
-            return "C"
-        elif self.check_win_connection("N") == "N":
-            return "N"
+        if self.check_win_connection(self.player1):
+            return self.player1
+        elif self.check_win_connection(self.player2):
+            return self.player2
         return None
