@@ -127,6 +127,10 @@ class Interface:
                         # return "AI-Hard"
                         pass
 
+            Button1.above(pygame.mouse.get_pos())
+            Button2.above(pygame.mouse.get_pos())
+            Button3.above(pygame.mouse.get_pos())
+
         return "exit"
 
 
@@ -205,7 +209,52 @@ class Interface:
         return "exit"
 
 
+    # def ai_easy_test(self, stage: str) -> str:
+        self.screen.fill(white)
+        board = self.clear_board()
+        self.draw_board(board)
+        moves = 0
+        while stage == "AI-Easy":
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    stage = "exit"
 
+
+                elif (event.type == pygame.MOUSEBUTTONDOWN and
+                      event.button == LEFT):
+
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    column = (mouse_x - offset) // cell_size
+                    row = (mouse_y - offset) // cell_size
+                    first_strip = cell_size + offset
+                    last_strip = cell_size*12 + offset
+
+                    if (first_strip < mouse_x < last_strip and
+                        first_strip < mouse_y < last_strip and
+                        self.game.get_cell((row, column)) is None):
+
+                        if moves%2 == 0:
+                            self.game.change_cell((row, column), "C")
+                            moves += 1
+                            self.draw_board(board)
+                            pygame.time.delay(1000)
+
+            self.draw_board(board)
+            if self.game.check_win():
+                return "over"
+
+            if moves%2 == 1:
+                # pygame.time.delay(1000)
+                cell_cords = easy_bot_move(self.game.get_grid())
+                self.game.change_cell(cell_cords, "N")
+                moves += 1
+
+
+            self.draw_board(board)
+            if self.game.check_win():
+                return "over"
+
+        return "exit"
 
 
 
@@ -237,22 +286,30 @@ class Button:
         rect_x, rect_y, rect_width, rect_height = rectangle
         rect_y += offset
         self.rectangle = rect_x, rect_y, rect_width, rect_height
-        pygame.draw.rect(screen, white, self.rectangle, 0, 20)
-        self.gg = pygame.draw.rect(screen, black, self.rectangle, 2, 20)
-
-        draw_text(screen, text, 18, screen_width//2, screen_height//2+offset)
         self.screen = screen
         self.text = text
         self.offset = offset
 
-    def inside(self, mouse: tuple[int, int]) -> bool:
-        if self.gg.collidepoint(mouse):
-            pygame.draw.rect(self.screen, red, self.rectangle, 0, 20)
-            pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
-            draw_text(self.screen, self.text, 18, screen_width//2,
-                      screen_height//2+self.offset)
+        self.draw_button(white)
 
+    def inside(self, mouse: tuple[int, int]) -> bool:
+        if self.area.collidepoint(mouse):
+            self.draw_button(red)
             pygame.display.flip()
             pygame.time.delay(333)
             return True
         return False
+
+    def above(self, mouse: tuple[int, int]) -> None:
+        if self.area.collidepoint(mouse):
+            self.draw_button(blue)
+            pygame.display.flip()
+        else:
+            self.draw_button(white)
+            pygame.display.flip()
+
+    def draw_button(self, color):
+        pygame.draw.rect(self.screen, color, self.rectangle, 0, 20)
+        self.area = pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
+        draw_text(self.screen, self.text, 18, screen_width//2,
+                    screen_height//2+self.offset)
