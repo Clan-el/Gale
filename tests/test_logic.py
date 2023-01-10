@@ -1,10 +1,10 @@
-import sys
-sys.path.insert(0,'.')
-
 from grid import grid, gridA, gridB, gridB2
 from logic import Game
 from bot import easy_bot_move
 from interface import Interface
+
+import sys
+sys.path.insert(0, '.')
 
 
 def test_check_near_connection():
@@ -12,34 +12,40 @@ def test_check_near_connection():
     aaa = eee.check_near_connection((7, 4), "C")
     assert aaa == [(7, 5), (8, 4), (6, 4), (7, 3)]
 
+
 def test_check_connection_none():
     game = Game(grid)
-    assert game.check_win_connection("C") == False
-    assert game.check_win_connection("N") == False
+    assert game.check_win_connection("C") is False
+    assert game.check_win_connection("N") is False
+
 
 def test_check_connection_A():
     gameA = Game(gridA)
-    assert gameA.check_win_connection("C") == True
-    assert gameA.check_win_connection("N") == False
+    assert gameA.check_win_connection("C") is True
+    assert gameA.check_win_connection("N") is False
+
 
 def test_check_connection_B():
     gameB = Game(gridB)
-    assert gameB.check_win_connection("C") == False
-    assert gameB.check_win_connection("N") == True
+    assert gameB.check_win_connection("C") is False
+    assert gameB.check_win_connection("N") is True
+
 
 def test_check_win_none():
     game = Game(grid)
-    assert game.check_win() == None
+    assert game.check_win() is None
     gameB2 = Game(gridB2)
-    assert gameB2.check_win() == None
+    assert gameB2.check_win() is None
+
 
 def test_check_win_A():
     gameA = Game(gridA)
-    assert gameA.check_win() == "C"
+    assert gameA.check_win() == gameA.player1
+
 
 def test_check_win_B():
     gameB = Game(gridB)
-    assert gameB.check_win() == "N"
+    assert gameB.check_win() == gameB.player2
 
 
 def test_check_win_random():
@@ -64,7 +70,7 @@ def test_check_win_random():
             assert game.check_win() is not None
         else:
             game = Game()
-            games +=1
+            games += 1
     assert games == 101
 
 
@@ -91,4 +97,4 @@ if __name__ == "__main__":
                 stage = interface.two_players(stage) if condition else stage
             interface.close()
         else:
-            games +=1
+            games += 1

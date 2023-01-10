@@ -1,6 +1,7 @@
 from grid import grid
 from copy import deepcopy
 
+
 class Game:
     def __init__(self, game_grid=None):
         if game_grid is None:
@@ -14,7 +15,7 @@ class Game:
     def clear_grid(self):
         self._grid = deepcopy(grid)
 
-    def get_grid(self) -> list[list[str|None]]:
+    def get_grid(self) -> list[list[str | None]]:
         return self._grid
 
     def get_cell(self, point: tuple[int, int]) -> str | None:
@@ -34,8 +35,8 @@ class Game:
         check_list = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 
         neighbors = [(i + x, j + y) for x, y in check_list
-                    if (0 <= i + x <= 12 and 0 <= j + y <= 12 and
-                    check_grid[i + x][j + y] == player)]
+                     if (0 <= i + x <= 12 and 0 <= j + y <= 12 and
+                     check_grid[i + x][j + y] == player)]
         return neighbors
 
     def check_win_connection(self,
@@ -47,7 +48,7 @@ class Game:
         check_grid = deepcopy(self._grid) if check_grid is None else check_grid
         checked = checked if checked is not None else []
 
-        if cords == None:
+        if cords is None:
             i, j = 1, 0
             if player == self.player2:
                 rotated = list(zip(*check_grid))[::-1]
@@ -58,7 +59,8 @@ class Game:
 
         last_i_0 = i
         while True:
-            next_checks = self.check_near_connection((i, j), player, check_grid)
+            args = (i, j), player, check_grid
+            next_checks = self.check_near_connection(*args)
             if j == 0 and not next_checks:
                 i += 2
                 last_i_0 = i
@@ -115,8 +117,6 @@ class Game:
 
             if j >= 11:
                 return True
-
-
 
     def check_win(self) -> str | None:
         if self.check_win_connection(self.player1):

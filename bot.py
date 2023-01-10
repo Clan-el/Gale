@@ -2,7 +2,7 @@ from random import randint, seed
 from datetime import datetime
 
 
-def easy_bot_move(grid: list[list[str|None]]) -> tuple[int, int]:
+def easy_bot_move(grid: list[list[str | None]]) -> tuple[int, int]:
     now = datetime.now()
     seed(now.minute * now.second * now.microsecond)
     while True:

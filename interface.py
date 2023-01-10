@@ -1,9 +1,11 @@
-import pygame, pygame.gfxdraw
+import pygame
+import pygame.gfxdraw
 # import os
 # os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 from bot import easy_bot_move
 from logic import Game
+
 
 def draw_text(surf: pygame.surface.Surface, text: str,
               size: int, x: int, y: int):
@@ -33,7 +35,6 @@ grey = (100, 100, 100)
 light_grey = (190, 190, 190)
 
 
-
 class Interface:
     def __init__(self, game: Game) -> None:
         pygame.display.init()
@@ -47,9 +48,9 @@ class Interface:
     def draw_board(self, board) -> None:
         for i in range(13):
             for j in range(13):
-                if self.game.get_cell((i, j)) == "C":
+                if self.game.get_cell((i, j)) == self.game.player1:
                     board[i][j] = red
-                elif self.game.get_cell((i, j)) == "N":
+                elif self.game.get_cell((i, j)) == self.game.player2:
                     board[i][j] = blue
 
                 x = j * cell_size + circle_radious + offset
@@ -59,28 +60,25 @@ class Interface:
                 pygame.gfxdraw.filled_circle(*arguments)
                 pygame.gfxdraw.aacircle(*arguments)
 
-                if (board[i][j] == white and 1<=i<=11 and 1<=j<=11):
+                if (board[i][j] == white and 1 <= i <= 11 and 1 <= j <= 11):
                     pygame.gfxdraw.filled_circle(self.screen, x, y, 2, grey)
                     pygame.gfxdraw.aacircle(self.screen, x, y, 2, grey)
         pygame.display.flip()
 
-
-    def clear_board(self) -> list[list[str|None]]:
+    def clear_board(self) -> list[list[str | None]]:
         board = []
         for _ in range(13):
             board.append([white] * 13)
         return board
 
-
     def endgame_box(self) -> None:
         self.draw_box(350, 110)
-
-        winner = "Czerwony" if self.game.check_win() == "C" else "Niebieski"
+        condition = self.game.check_win() == self.game.player1
+        winner = "Czerwony" if condition else "Niebieski"
         text = f"Wygrał gracz {winner}"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2-15)
         text = "Kliknij, aby zagrać ponownie lub wyjdź"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2+15)
-
 
     def draw_box(self, rect_width: int, rect_height: int) -> None:
         rect_x = (screen_width - rect_width) // 2
@@ -90,7 +88,6 @@ class Interface:
         pygame.draw.rect(*param)
         param = self.screen, black, rectangle, 5, 20
         pygame.draw.rect(*param)
-
 
     def choose_mode(self, stage: str) -> str:
         self.screen.fill(white)
@@ -117,7 +114,9 @@ class Interface:
                 if event.type == pygame.QUIT:
                     return "exit"
 
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                elif (event.type == pygame.MOUSEBUTTONDOWN
+                      and event.button == LEFT):
+
                     if Button1.inside(pygame.mouse.get_pos()):
                         return "2_players"
                     elif Button2.inside(pygame.mouse.get_pos()):
@@ -132,7 +131,6 @@ class Interface:
 
         return "exit"
 
-
     def two_players(self, stage: str) -> str:
         self.screen.fill(white)
         board = self.clear_board()
@@ -142,7 +140,8 @@ class Interface:
                 if event.type == pygame.QUIT:
                     stage = "exit"
 
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                elif (event.type == pygame.MOUSEBUTTONDOWN
+                      and event.button == LEFT):
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     column = (mouse_x - offset) // cell_size
                     row = (mouse_y - offset) // cell_size
@@ -150,14 +149,16 @@ class Interface:
                     last_strip = cell_size*12 + offset
 
                     if (first_strip < mouse_x < last_strip and
-                        first_strip < mouse_y < last_strip and
-                        self.game.get_cell((row, column)) is None):
+                       first_strip < mouse_y < last_strip and
+                       self.game.get_cell((row, column)) is None):
 
                         moves += 1
                         if moves % 2 == 1:
-                            self.game.change_cell((row, column), "C")
+                            self.game.change_cell((row, column),
+                                                  self.game.player1)
                         else:
-                            self.game.change_cell((row, column), "N")
+                            self.game.change_cell((row, column),
+                                                  self.game.player2)
 
             self.draw_board(board)
 
@@ -166,17 +167,15 @@ class Interface:
 
         return "exit"
 
-
     def ai_easy(self, stage: str) -> str:
         self.screen.fill(white)
         board = self.clear_board()
         self.draw_board(board)
-        moves = 0
+        # moves = 0
         while stage == "AI-Easy":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     stage = "exit"
-
 
                 elif (event.type == pygame.MOUSEBUTTONDOWN and
                       event.button == LEFT):
@@ -188,10 +187,10 @@ class Interface:
                     last_strip = cell_size*12 + offset
 
                     if (first_strip < mouse_x < last_strip and
-                        first_strip < mouse_y < last_strip and
-                        self.game.get_cell((row, column)) is None):
+                       first_strip < mouse_y < last_strip and
+                       self.game.get_cell((row, column)) is None):
 
-                        self.game.change_cell((row, column), "C")
+                        self.game.change_cell((row, column), self.game.player1)
                         self.draw_board(board)
 
                         if self.game.check_win():
@@ -199,7 +198,7 @@ class Interface:
 
                         pygame.time.delay(1000)
                         cell_cords = easy_bot_move(self.game.get_grid())
-                        self.game.change_cell(cell_cords, "N")
+                        self.game.change_cell(cell_cords, self.game.player2)
                         self.draw_board(board)
 
                         if self.game.check_win():
@@ -207,56 +206,51 @@ class Interface:
 
         return "exit"
 
-
     # def ai_easy_test(self, stage: str) -> str:
-        self.screen.fill(white)
-        board = self.clear_board()
-        self.draw_board(board)
-        moves = 0
-        while stage == "AI-Easy":
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    stage = "exit"
+        # self.screen.fill(white)
+        # board = self.clear_board()
+        # self.draw_board(board)
+        # moves = 0
+        # while stage == "AI-Easy":
+        #     for event in pygame.event.get():
+        #         if event.type == pygame.QUIT:
+        #             stage = "exit"
 
+        #         elif (event.type == pygame.MOUSEBUTTONDOWN and
+        #               event.button == LEFT):
 
-                elif (event.type == pygame.MOUSEBUTTONDOWN and
-                      event.button == LEFT):
+        #             mouse_x, mouse_y = pygame.mouse.get_pos()
+        #             column = (mouse_x - offset) // cell_size
+        #             row = (mouse_y - offset) // cell_size
+        #             first_strip = cell_size + offset
+        #             last_strip = cell_size*12 + offset
 
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    column = (mouse_x - offset) // cell_size
-                    row = (mouse_y - offset) // cell_size
-                    first_strip = cell_size + offset
-                    last_strip = cell_size*12 + offset
+        #             if (first_strip < mouse_x < last_strip and
+        #                 first_strip < mouse_y < last_strip and
+        #                 self.game.get_cell((row, column)) is None):
 
-                    if (first_strip < mouse_x < last_strip and
-                        first_strip < mouse_y < last_strip and
-                        self.game.get_cell((row, column)) is None):
+        #                 if moves%2 == 0:
+        #                     self.game.change_cell((row, column),
+        #                                           self.game.player1)
+        #                     moves += 1
+        #                     self.draw_board(board)
+        #                     pygame.time.delay(1000)
 
-                        if moves%2 == 0:
-                            self.game.change_cell((row, column), "C")
-                            moves += 1
-                            self.draw_board(board)
-                            pygame.time.delay(1000)
+        #     self.draw_board(board)
+        #     if self.game.check_win():
+        #         return "over"
 
-            self.draw_board(board)
-            if self.game.check_win():
-                return "over"
+        #     if moves%2 == 1:
+        #         # pygame.time.delay(1000)
+        #         cell_cords = easy_bot_move(self.game.get_grid())
+        #         self.game.change_cell(cell_cords, self.game.player2)
+        #         moves += 1
 
-            if moves%2 == 1:
-                # pygame.time.delay(1000)
-                cell_cords = easy_bot_move(self.game.get_grid())
-                self.game.change_cell(cell_cords, "N")
-                moves += 1
+        #     self.draw_board(board)
+        #     if self.game.check_win():
+        #         return "over"
 
-
-            self.draw_board(board)
-            if self.game.check_win():
-                return "over"
-
-        return "exit"
-
-
-
+        # return "exit"
 
     def over(self, stage: str) -> str:
         self.endgame_box()
@@ -275,7 +269,6 @@ class Interface:
 
     def close(self):
         pygame.quit()
-
 
 
 class Button:
@@ -311,4 +304,4 @@ class Button:
         pygame.draw.rect(self.screen, color, self.rectangle, 0, 20)
         self.area = pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
         draw_text(self.screen, self.text, 18, screen_width//2,
-                    screen_height//2+self.offset)
+                  screen_height//2+self.offset)
