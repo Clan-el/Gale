@@ -29,7 +29,6 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 blue = (0, 0, 255)
 red = (255, 0, 0)
-yellow = (255, 255, 0)
 grey = (100, 100, 100)
 light_grey = (190, 190, 190)
 
@@ -74,12 +73,12 @@ class Interface:
 
 
     def endgame_box(self) -> None:
-        self.draw_box(320, 110)
+        self.draw_box(350, 110)
 
         winner = "Czerwony" if self.game.check_win() == "C" else "Niebieski"
         text = f"Wygrał gracz {winner}"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2-15)
-        text = "Kliknij, aby kontynuować lub wyjdź"
+        text = "Kliknij, aby zagrać ponownie lub wyjdź"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2+15)
 
 
@@ -294,7 +293,7 @@ class Button:
 
     def inside(self, mouse: tuple[int, int]) -> bool:
         if self.area.collidepoint(mouse):
-            self.draw_button(red)
+            self.draw_button(blue)
             pygame.display.flip()
             pygame.time.delay(333)
             return True
@@ -302,13 +301,13 @@ class Button:
 
     def above(self, mouse: tuple[int, int]) -> None:
         if self.area.collidepoint(mouse):
-            self.draw_button(blue)
+            self.draw_button(red)
             pygame.display.flip()
         else:
             self.draw_button(white)
             pygame.display.flip()
 
-    def draw_button(self, color):
+    def draw_button(self, color: tuple[int, int, int]):
         pygame.draw.rect(self.screen, color, self.rectangle, 0, 20)
         self.area = pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
         draw_text(self.screen, self.text, 18, screen_width//2,
