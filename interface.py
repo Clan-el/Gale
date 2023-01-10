@@ -1,8 +1,5 @@
 import pygame
 import pygame.gfxdraw
-# import os
-# os.environ['SDL_AUDIODRIVER'] = 'dsp'
-
 from bot import easy_bot_move
 from logic import Game
 
@@ -63,7 +60,7 @@ class Interface:
                 if (board[i][j] == white and 1 <= i <= 11 and 1 <= j <= 11):
                     pygame.gfxdraw.filled_circle(self.screen, x, y, 2, grey)
                     pygame.gfxdraw.aacircle(self.screen, x, y, 2, grey)
-        pygame.display.flip()
+        pygame.display.update()
 
     def clear_board(self) -> list[list[str | None]]:
         board = []
@@ -146,7 +143,7 @@ class Interface:
                     column = (mouse_x - offset) // cell_size
                     row = (mouse_y - offset) // cell_size
                     first_strip = cell_size + offset
-                    last_strip = cell_size*12 + offset
+                    last_strip = cell_size * 12 + offset
 
                     if (first_strip < mouse_x < last_strip and
                        first_strip < mouse_y < last_strip and
@@ -206,52 +203,6 @@ class Interface:
 
         return "exit"
 
-    # def ai_easy_test(self, stage: str) -> str:
-        # self.screen.fill(white)
-        # board = self.clear_board()
-        # self.draw_board(board)
-        # moves = 0
-        # while stage == "AI-Easy":
-        #     for event in pygame.event.get():
-        #         if event.type == pygame.QUIT:
-        #             stage = "exit"
-
-        #         elif (event.type == pygame.MOUSEBUTTONDOWN and
-        #               event.button == LEFT):
-
-        #             mouse_x, mouse_y = pygame.mouse.get_pos()
-        #             column = (mouse_x - offset) // cell_size
-        #             row = (mouse_y - offset) // cell_size
-        #             first_strip = cell_size + offset
-        #             last_strip = cell_size*12 + offset
-
-        #             if (first_strip < mouse_x < last_strip and
-        #                 first_strip < mouse_y < last_strip and
-        #                 self.game.get_cell((row, column)) is None):
-
-        #                 if moves%2 == 0:
-        #                     self.game.change_cell((row, column),
-        #                                           self.game.player1)
-        #                     moves += 1
-        #                     self.draw_board(board)
-        #                     pygame.time.delay(1000)
-
-        #     self.draw_board(board)
-        #     if self.game.check_win():
-        #         return "over"
-
-        #     if moves%2 == 1:
-        #         # pygame.time.delay(1000)
-        #         cell_cords = easy_bot_move(self.game.get_grid())
-        #         self.game.change_cell(cell_cords, self.game.player2)
-        #         moves += 1
-
-        #     self.draw_board(board)
-        #     if self.game.check_win():
-        #         return "over"
-
-        # return "exit"
-
     def over(self, stage: str) -> str:
         self.endgame_box()
         pygame.display.update()
@@ -287,7 +238,6 @@ class Button:
     def inside(self, mouse: tuple[int, int]) -> bool:
         if self.area.collidepoint(mouse):
             self.draw_button(blue)
-            pygame.display.flip()
             pygame.time.delay(333)
             return True
         return False
@@ -295,13 +245,12 @@ class Button:
     def above(self, mouse: tuple[int, int]) -> None:
         if self.area.collidepoint(mouse):
             self.draw_button(red)
-            pygame.display.flip()
         else:
             self.draw_button(white)
-            pygame.display.flip()
 
     def draw_button(self, color: tuple[int, int, int]):
         pygame.draw.rect(self.screen, color, self.rectangle, 0, 20)
         self.area = pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
         draw_text(self.screen, self.text, 18, screen_width//2,
                   screen_height//2+self.offset)
+        pygame.display.update()

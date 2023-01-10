@@ -1,9 +1,9 @@
+import sys
+# sys.path.insert(0, '.')
 from grid import grid, gridA, gridB, gridB2
 from logic import Game
 from bot import easy_bot_move
 from interface import Interface
-
-import sys
 sys.path.insert(0, '.')
 
 
