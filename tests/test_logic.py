@@ -1,51 +1,59 @@
 import sys
-# sys.path.insert(0, '.')
-from grid import grid, gridA, gridB, gridB2
+sys.path.insert(0, '.')
+from grid1 import grid, gridA, gridB, gridB2
 from logic import Game
 from bot import easy_bot_move
 from interface import Interface
-sys.path.insert(0, '.')
+# sys.path.insert(0, '.')
 
 
 def test_check_near_connection():
-    eee = Game(gridA)
+    eee = Game()
+    eee.grid._set_grid(gridA)
     aaa = eee.check_near_connection((7, 4), "C")
     assert aaa == [(7, 5), (8, 4), (6, 4), (7, 3)]
 
 
 def test_check_connection_none():
-    game = Game(grid)
+    game = Game()
+    game.grid._set_grid(grid)
     assert game.check_win_connection("C") is False
     assert game.check_win_connection("N") is False
 
 
 def test_check_connection_A():
-    gameA = Game(gridA)
-    assert gameA.check_win_connection("C") is True
-    assert gameA.check_win_connection("N") is False
+    game = Game()
+    game.grid._set_grid(gridA)
+    assert game.check_win_connection("C") is True
+    assert game.check_win_connection("N") is False
 
 
 def test_check_connection_B():
-    gameB = Game(gridB)
-    assert gameB.check_win_connection("C") is False
-    assert gameB.check_win_connection("N") is True
+    game = Game()
+    game.grid._set_grid(gridB)
+    assert game.check_win_connection("C") is False
+    assert game.check_win_connection("N") is True
 
 
 def test_check_win_none():
-    game = Game(grid)
+    game = Game()
+    game.grid._set_grid(grid)
     assert game.check_win() is None
-    gameB2 = Game(gridB2)
+    gameB2 = Game()
+    gameB2.grid._set_grid(gridB2)
     assert gameB2.check_win() is None
 
 
 def test_check_win_A():
-    gameA = Game(gridA)
-    assert gameA.check_win() == gameA.player1
+    game = Game()
+    game.grid._set_grid(gridA)
+    assert game.check_win() == game.player1
 
 
 def test_check_win_B():
-    gameB = Game(gridB)
-    assert gameB.check_win() == gameB.player2
+    game = Game()
+    game.grid._set_grid(gridB)
+    assert game.check_win() == game.player2
 
 
 def test_check_win_random():
@@ -57,15 +65,15 @@ def test_check_win_random():
     game = Game()
     games = 0
     while games <= 100:
-        i = 0
-        while i < 61 and game.check_win() is None:
-            if i == 58:
+        moves = 0
+        while moves < 61 and game.check_win() is None:
+            if moves == 58:
                 pass
-            player = "C" if i % 2 == 0 else "N"
-            cell_cords = easy_bot_move(game.get_grid())
-            game.change_cell(cell_cords, player)
-            i += 1
-        print(game.check_win(), i)
+            player = "C" if moves % 2 == 0 else "N"
+            cell_cords = easy_bot_move(game.grid)
+            game.grid.change_cell(cell_cords, player)
+            moves += 1
+        print(game.check_win(), moves)
         if game.check_win() is None:
             assert game.check_win() is not None
         else:
@@ -78,17 +86,17 @@ if __name__ == "__main__":
     """
     Analogiczne do test_check_win_random, ale z reprezentacją graficzną siatki
     """
-    game = Game(grid)
+    game = Game()
     games = 0
     while games <= 100:
-        game.clear_grid()
-        i = 0
-        while i < 61 and game.check_win() is None:
-            player = "C" if i % 2 == 0 else "N"
-            cell_cords = easy_bot_move(game.get_grid())
-            game.change_cell(cell_cords, player)
-            i += 1
-        print(game.check_win(), i)
+        game.grid.clear_grid()
+        moves = 0
+        while moves < 61 and game.check_win() is None:
+            player = game.player1 if moves % 2 == 0 else game.player2
+            cell_cords = easy_bot_move(game.grid)
+            game.grid.change_cell(cell_cords, player)
+            moves += 1
+        print(game.check_win(), moves)
         if game.check_win() is None:
             interface = Interface(game)
             stage = "2_players"
