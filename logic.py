@@ -15,7 +15,7 @@ class Game:
                               check_grid=None) -> list:
 
         row, column = point
-        check_grid = self.grid.grid[:] if check_grid is None else check_grid
+        check_grid = self.grid.grid if check_grid is None else check_grid
         check_list = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 
         neighbors = [(row + x, column + y) for x, y in check_list
