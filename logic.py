@@ -1,13 +1,14 @@
 from grid import Grid
-
+from interface import Interface
+from bot import easy_bot_move, hard_bot_move
+from time import sleep
 
 class Game:
     def __init__(self):
         self.player1 = "C"
         self.player2 = "N"
-        self.size = 13  # musi być nie parzyste
-        grid = Grid(self.player1, self.player2, self.size)
-        self.grid = grid
+        self.size = 13  # musi być nieparzyste
+        self.grid = Grid(self.player1, self.player2, self.size)
 
     def check_near_connection(self,
                               point: tuple[int, int],
@@ -109,3 +110,58 @@ class Game:
         elif self.check_win_connection(self.player2):
             return self.player2
         return None
+
+    def run(self):
+        self.interface = Interface(self.grid)
+        while True:
+            mode = self.interface.choose_mode()
+            winner = self.play(mode)
+            self.interface.over(winner)
+
+    def play(self, mode):
+        self.grid.clear_grid()
+        self.interface.clear_screen()
+        self.interface.draw_board(self.interface.board)
+
+        if mode == "2_players":
+            moves = 0
+            while self.check_win() is None:
+                cell = self.interface.get_click()
+                player = self.player1 if moves % 2 == 0 else self.player2
+                self.grid.change_cell(cell, player)
+                self.interface.draw_board(self.interface.board)
+                moves += 1
+            return self.check_win()
+
+        # elif mode == "test":
+        #     moves = 0
+        #     while self.check_win() is None:
+        #         cell = easy_bot_move(self.grid)
+        #         player = self.player1 if moves % 2 == 0 else self.player2
+        #         self.grid.change_cell(cell, player)
+        #         self.interface.draw_board(self.interface.board)
+        #         moves += 1
+        #         sleep(0.333)
+        #     return self.check_win()
+
+        else:
+            while True:
+                cell = self.interface.get_click()
+                self.grid.change_cell(cell, self.player1)
+                self.interface.draw_board(self.interface.board)
+
+                winner = self.check_win()
+                if winner is not None:
+                    return winner
+
+                if mode == "AI-Easy":
+                    cell = easy_bot_move(self.grid)
+                elif mode == "AI-Hard":
+                     cell = hard_bot_move(self.grid)
+
+                self.grid.change_cell(cell, self.player2)
+                sleep(0.5)
+                self.interface.draw_board(self.interface.board)
+                winner = self.check_win()
+                if winner is not None:
+                    return winner

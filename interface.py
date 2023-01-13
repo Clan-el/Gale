@@ -1,7 +1,6 @@
 import pygame
 import pygame.gfxdraw
-from bot import easy_bot_move
-from logic import Game
+from grid import Grid
 
 
 def draw_text(surf: pygame.surface.Surface, text: str,
@@ -33,21 +32,21 @@ light_grey = (190, 190, 190)
 
 
 class Interface:
-    def __init__(self, game: Game) -> None:
+    def __init__(self, grid: Grid) -> None:
         pygame.display.init()
         pygame.font.init()
         pygame.display.set_caption("Shannon switching - Gale")
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.screen.fill(white)
-        self.game = game
+        self.grid = grid
         self.board = self.clear_board()
 
     def draw_board(self, board) -> None:
-        for i in range(self.game.size):
-            for j in range(self.game.size):
-                if self.game.grid.get_cell((i, j)) == self.game.player1:
+        for i in range(self.grid.size):
+            for j in range(self.grid.size):
+                if self.grid.get_cell((i, j)) == self.grid.player1:
                     board[i][j] = red
-                elif self.game.grid.get_cell((i, j)) == self.game.player2:
+                elif self.grid.get_cell((i, j)) == self.grid.player2:
                     board[i][j] = blue
 
                 x = j * cell_size + circle_radious + offset
@@ -57,26 +56,27 @@ class Interface:
                 pygame.gfxdraw.filled_circle(*arguments)
                 pygame.gfxdraw.aacircle(*arguments)
 
-                if (board[i][j] == white and 1 <= i <= self.game.size - 2
-                   and 1 <= j <= self.game.size - 2):
+                if (board[i][j] == white and 1 <= i <= self.grid.size - 2
+                   and 1 <= j <= self.grid.size - 2):
                     pygame.gfxdraw.filled_circle(self.screen, x, y, 2, grey)
                     pygame.gfxdraw.aacircle(self.screen, x, y, 2, grey)
         pygame.display.update()
 
     def clear_board(self) -> list[list[str | None]]:
         board = []
-        for _ in range(self.game.size):
-            board.append([white] * self.game.size)
+        for _ in range(self.grid.size):
+            board.append([white] * self.grid.size)
         return board
 
-    def endgame_box(self) -> None:
+    def endgame_box(self, winner) -> None:
         self.draw_box(350, 110)
-        condition = self.game.check_win() == self.game.player1
+        condition = winner == self.grid.player1
         winner = "Czerwony" if condition else "Niebieski"
         text = f"Wygrał gracz {winner}"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2-15)
         text = "Kliknij, aby zagrać ponownie lub wyjdź"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2+15)
+        pygame.display.update()
 
     def draw_box(self, rect_width: int, rect_height: int) -> None:
         rect_x = (screen_width - rect_width) // 2
@@ -87,7 +87,7 @@ class Interface:
         param = self.screen, black, rectangle, 5, 20
         pygame.draw.rect(*param)
 
-    def choose_mode(self, stage: str) -> str:
+    def choose_mode(self) -> str:
         self.screen.fill(white)
         self.draw_box(300, 300)
         text = "Witaj w GALE!"
@@ -107,10 +107,10 @@ class Interface:
         Button3 = Button(self.screen, "vs Komputer - Trudny", rectangle, +100)
         pygame.display.flip()
 
-        while stage == "starting":
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return "exit"
+                    exit()
 
                 elif (event.type == pygame.MOUSEBUTTONDOWN
                       and event.button == LEFT):
@@ -118,25 +118,24 @@ class Interface:
                     if Button1.inside(pygame.mouse.get_pos()):
                         return "2_players"
                     elif Button2.inside(pygame.mouse.get_pos()):
+                        # return "test"
                         return "AI-Easy"
                     elif Button3.inside(pygame.mouse.get_pos()):
-                        # return "AI-Hard"
-                        pass
+                        return "AI-Hard"
 
             Button1.above(pygame.mouse.get_pos())
             Button2.above(pygame.mouse.get_pos())
             Button3.above(pygame.mouse.get_pos())
 
-        return "exit"
-
-    def two_players(self, stage: str) -> str:
+    def clear_screen(self):
         self.screen.fill(white)
-        board = self.clear_board()
-        moves = 0
-        while stage == "2_players":
+        self.board = self.clear_board()
+
+    def get_click(self) -> str:
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    stage = "exit"
+                    exit()
 
                 elif (event.type == pygame.MOUSEBUTTONDOWN
                       and event.button == LEFT):
@@ -144,85 +143,23 @@ class Interface:
                     column = (mouse_x - offset) // cell_size
                     row = (mouse_y - offset) // cell_size
                     first_strip = cell_size + offset
-                    last_strip = cell_size * self.game.size - 1 + offset
+                    last_strip = cell_size * self.grid.size - 1 + offset
 
                     if (first_strip < mouse_x < last_strip and
                        first_strip < mouse_y < last_strip and
-                       self.game.grid.get_cell((row, column)) is None):
+                       self.grid.get_cell((row, column)) is None):
 
-                        moves += 1
-                        if moves % 2 == 1:
-                            self.game.grid.change_cell((row, column),
-                                                       self.game.player1)
-                        else:
-                            self.game.grid.change_cell((row, column),
-                                                       self.game.player2)
+                        return (row, column)
 
-            self.draw_board(board)
-
-            if self.game.check_win():
-                return "over"
-
-        return "exit"
-
-    def ai_easy(self, stage: str) -> str:
-        self.screen.fill(white)
-        board = self.clear_board()
-        self.draw_board(board)
-        # moves = 0
-        while stage == "AI-Easy":
+    def over(self, winner: str) -> str:
+        self.endgame_box(winner)
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    stage = "exit"
-
-                elif (event.type == pygame.MOUSEBUTTONDOWN and
-                      event.button == LEFT):
-
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    column = (mouse_x - offset) // cell_size
-                    row = (mouse_y - offset) // cell_size
-                    first_strip = cell_size + offset
-                    last_strip = cell_size*self.game.size - 1 + offset
-
-                    if (first_strip < mouse_x < last_strip and
-                       first_strip < mouse_y < last_strip and
-                       self.game.grid.get_cell((row, column)) is None):
-
-                        self.game.grid.change_cell((row, column),
-                                                   self.game.player1)
-                        self.draw_board(board)
-
-                        if self.game.check_win():
-                            return "over"
-
-                        pygame.time.delay(1000)
-                        cell_cords = easy_bot_move(self.game.grid)
-                        self.game.grid.change_cell(cell_cords,
-                                                   self.game.player2)
-                        self.draw_board(board)
-
-                        if self.game.check_win():
-                            return "over"
-
-        return "exit"
-
-    def over(self, stage: str) -> str:
-        self.endgame_box()
-        pygame.display.update()
-
-        while stage == "over":
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    stage = "exit"
+                    exit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.game.grid.clear_grid()
-                    return "starting"
-
-        return "exit"
-
-    def close(self):
-        pygame.quit()
+                    return
 
 
 class Button:
