@@ -39,4 +39,3 @@ class Grid:
                 if self.grid[row][column] is None:
                     free_cell_list.append((row, column))
         return free_cell_list
-
