@@ -9,5 +9,8 @@ def easy_bot_move(grid: Grid) -> tuple[int, int]:
     return choice(grid.free_cells())
 
 
-def hard_bot_mode(grid: Grid) -> tuple[int, int]:
+def hard_bot_move(grid: Grid) -> tuple[int, int]:
+    now = datetime.now()
+    seed(now.minute ** now.second - now.microsecond)
+
     pass
