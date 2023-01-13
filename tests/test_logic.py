@@ -1,6 +1,6 @@
 import sys
+from grid_tests import grid, gridA, gridB, gridB2
 sys.path.insert(0, '.')
-from grid1 import grid, gridA, gridB, gridB2
 from logic import Game
 from bot import easy_bot_move
 from interface import Interface
