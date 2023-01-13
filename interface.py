@@ -43,11 +43,11 @@ class Interface:
         self.board = self.clear_board()
 
     def draw_board(self, board) -> None:
-        for i in range(13):
-            for j in range(13):
-                if self.game.get_cell((i, j)) == self.game.player1:
+        for i in range(self.game.size):
+            for j in range(self.game.size):
+                if self.game.grid.get_cell((i, j)) == self.game.player1:
                     board[i][j] = red
-                elif self.game.get_cell((i, j)) == self.game.player2:
+                elif self.game.grid.get_cell((i, j)) == self.game.player2:
                     board[i][j] = blue
 
                 x = j * cell_size + circle_radious + offset
@@ -57,15 +57,16 @@ class Interface:
                 pygame.gfxdraw.filled_circle(*arguments)
                 pygame.gfxdraw.aacircle(*arguments)
 
-                if (board[i][j] == white and 1 <= i <= 11 and 1 <= j <= 11):
+                if (board[i][j] == white and 1 <= i <= self.game.size - 2
+                   and 1 <= j <= self.game.size - 2):
                     pygame.gfxdraw.filled_circle(self.screen, x, y, 2, grey)
                     pygame.gfxdraw.aacircle(self.screen, x, y, 2, grey)
         pygame.display.update()
 
     def clear_board(self) -> list[list[str | None]]:
         board = []
-        for _ in range(13):
-            board.append([white] * 13)
+        for _ in range(self.game.size):
+            board.append([white] * self.game.size)
         return board
 
     def endgame_box(self) -> None:
@@ -143,19 +144,19 @@ class Interface:
                     column = (mouse_x - offset) // cell_size
                     row = (mouse_y - offset) // cell_size
                     first_strip = cell_size + offset
-                    last_strip = cell_size * 12 + offset
+                    last_strip = cell_size * self.game.size - 1 + offset
 
                     if (first_strip < mouse_x < last_strip and
                        first_strip < mouse_y < last_strip and
-                       self.game.get_cell((row, column)) is None):
+                       self.game.grid.get_cell((row, column)) is None):
 
                         moves += 1
                         if moves % 2 == 1:
-                            self.game.change_cell((row, column),
-                                                  self.game.player1)
+                            self.game.grid.change_cell((row, column),
+                                                       self.game.player1)
                         else:
-                            self.game.change_cell((row, column),
-                                                  self.game.player2)
+                            self.game.grid.change_cell((row, column),
+                                                       self.game.player2)
 
             self.draw_board(board)
 
@@ -181,21 +182,23 @@ class Interface:
                     column = (mouse_x - offset) // cell_size
                     row = (mouse_y - offset) // cell_size
                     first_strip = cell_size + offset
-                    last_strip = cell_size*12 + offset
+                    last_strip = cell_size*self.game.size - 1 + offset
 
                     if (first_strip < mouse_x < last_strip and
                        first_strip < mouse_y < last_strip and
-                       self.game.get_cell((row, column)) is None):
+                       self.game.grid.get_cell((row, column)) is None):
 
-                        self.game.change_cell((row, column), self.game.player1)
+                        self.game.grid.change_cell((row, column),
+                                                   self.game.player1)
                         self.draw_board(board)
 
                         if self.game.check_win():
                             return "over"
 
                         pygame.time.delay(1000)
-                        cell_cords = easy_bot_move(self.game.get_grid())
-                        self.game.change_cell(cell_cords, self.game.player2)
+                        cell_cords = easy_bot_move(self.game.grid)
+                        self.game.grid.change_cell(cell_cords,
+                                                   self.game.player2)
                         self.draw_board(board)
 
                         if self.game.check_win():
@@ -213,7 +216,7 @@ class Interface:
                     stage = "exit"
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.game.clear_grid()
+                    self.game.grid.clear_grid()
                     return "starting"
 
         return "exit"
