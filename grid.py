@@ -1,79 +1,42 @@
-grid = [
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-]
+class Grid:
+    def __init__(self, player1, player2, size) -> None:
+        self.player1 = player1
+        self.player2 = player2
+        self.size = size
+        self.clear_grid()
 
-gridA = [
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', None, 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-]
+    def clear_grid(self):
+        grid = []
+        for _ in range(self.size):
+            grid.append([None] * self.size)
+        for row in range(self.size):
+            for column in range(self.size):
+                if ((row * self.size) + column) % 2 == 1:
+                    if row % 2 == 0:
+                        grid[row][column] = self.player2
+                    else:
+                        grid[row][column] = self.player1
+        self.grid = grid
 
-gridA2 = [
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', 'C', 'C', 'C', 'C', 'C', 'C', None, 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', None, 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', 'C', 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', 'C', 'C', 'C', 'C', 'C', 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-]
+    def get_grid(self) -> list[list[str | None]]:
+        return self.grid
 
-gridB = [
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', 'N', 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', 'N', 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', None, 'C', 'N', 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', 'N', 'N', 'N', 'N', 'N', 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', None, 'C', None, 'C', 'N', 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', None, 'C', None, 'C', 'N', 'C', None, 'C'],
-  [None, 'N', 'N', 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', 'N', 'C', None, 'C', None, 'C', None, 'C', 'N', 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', 'N', 'N', None],
-  ['C', 'N', 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-]
+    def get_cell(self, point: tuple[int, int]) -> str | None:
+        return self.grid[point[0]][point[1]]
 
-gridB2 = [
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', 'N', 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', 'N', 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', None, 'C', 'N', 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', 'N', 'N', 'N', 'N', 'N', 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', None, 'C', None, 'C', 'N', 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', 'N', 'C', None, 'C', None, 'C', 'N', 'C', None, 'C'],
-  [None, 'N', 'N', 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', 'N', 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', 'N', 'N', None],
-  ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
-  [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
-]
+    def change_cell(self, point: tuple[int, int], player: str):
+        row, column = point
+        self.grid[row][column] = player
+
+    def _set_grid(self, new_grid):
+        self.grid = new_grid
+        pass
+
+    def free_cells(self):
+        free_cell_list = []
+        for row in range(1, self.size - 1):
+            for column in range(1, self.size - 1):
+                if self.grid[row][column] is None:
+                    free_cell_list.append((row, column))
+        return free_cell_list
+
