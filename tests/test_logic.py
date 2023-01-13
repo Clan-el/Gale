@@ -64,11 +64,10 @@ def test_check_win_random():
     """
     game = Game()
     games = 0
+    max_moves = (game.size//2)*(game.size + 1)
     while games <= 100:
         moves = 0
-        while moves < 61 and game.check_win() is None:
-            if moves == 58:
-                pass
+        while moves < max_moves and game.check_win() is None:
             player = "C" if moves % 2 == 0 else "N"
             cell_cords = easy_bot_move(game.grid)
             game.grid.change_cell(cell_cords, player)
@@ -88,10 +87,11 @@ if __name__ == "__main__":
     """
     game = Game()
     games = 0
+    max_moves = (game.size//2)*(game.size + 1)
     while games <= 100:
         game.grid.clear_grid()
         moves = 0
-        while moves < 61 and game.check_win() is None:
+        while moves < max_moves and game.check_win() is None:
             player = game.player1 if moves % 2 == 0 else game.player2
             cell_cords = easy_bot_move(game.grid)
             game.grid.change_cell(cell_cords, player)
