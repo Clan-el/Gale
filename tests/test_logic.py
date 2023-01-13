@@ -76,7 +76,7 @@ def test_check_win_random():
         if game.check_win() is None:
             assert game.check_win() is not None
         else:
-            game = Game()
+            game.grid.clear_grid()
             games += 1
     assert games == 101
 
@@ -98,11 +98,8 @@ if __name__ == "__main__":
             moves += 1
         print(game.check_win(), moves)
         if game.check_win() is None:
-            interface = Interface(game)
-            stage = "2_players"
-            while stage != "exit":
-                condition = stage == "2_players" or stage == "over"
-                stage = interface.two_players(stage) if condition else stage
-            interface.close()
+            game.interface = Interface(game.grid)
+            game.interface.draw_board(game.interface.board)
         else:
             games += 1
+        games += 1
