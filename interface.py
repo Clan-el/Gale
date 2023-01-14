@@ -17,7 +17,7 @@ def draw_text(surf: pygame.surface.Surface, text: str,
 
 # Set the sizes
 screen_width, screen_height = 670, 670
-offset = 10
+# offset = 10
 cell_size = 50
 circle_radious = 23
 LEFT = 1
@@ -41,6 +41,10 @@ class Interface:
         self.grid = grid
         self.board = self.clear_board()
 
+    def change_caption(self, new_text):
+        text = "Shannon switching - Gale - "
+        pygame.display.set_caption(str(text + new_text))
+
     def draw_board(self, board) -> None:
         for i in range(self.grid.size):
             for j in range(self.grid.size):
@@ -49,8 +53,9 @@ class Interface:
                 elif self.grid.get_cell((i, j)) == self.grid.player2:
                     board[i][j] = blue
 
-                x = j * cell_size + circle_radious + offset
-                y = i * cell_size + circle_radious + offset
+                shift = (screen_width - cell_size * self.grid.size)//2
+                x = j * cell_size + circle_radious + shift
+                y = i * cell_size + circle_radious + shift
 
                 arguments = self.screen, x, y, circle_radious, board[i][j]
                 pygame.gfxdraw.filled_circle(*arguments)
@@ -88,6 +93,7 @@ class Interface:
         pygame.draw.rect(*param)
 
     def choose_mode(self) -> str:
+        pygame.display.set_caption("Shannon switching - Gale")
         self.screen.fill(white)
         self.draw_box(300, 300)
         text = "Witaj w GALE!"
@@ -139,11 +145,13 @@ class Interface:
 
                 elif (event.type == pygame.MOUSEBUTTONDOWN
                       and event.button == LEFT):
+
+                    shift = (screen_width - cell_size * self.grid.size)//2
                     mouse_x, mouse_y = pygame.mouse.get_pos()
-                    column = (mouse_x - offset) // cell_size
-                    row = (mouse_y - offset) // cell_size
-                    first_strip = cell_size + offset
-                    last_strip = cell_size * self.grid.size - 1 + offset
+                    column = (mouse_x - shift) // cell_size
+                    row = (mouse_y - shift) // cell_size
+                    first_strip = cell_size + shift
+                    last_strip = cell_size * self.grid.size - 1 + shift
 
                     if (first_strip < mouse_x < last_strip and
                        first_strip < mouse_y < last_strip and
