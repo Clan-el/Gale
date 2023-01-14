@@ -1,4 +1,4 @@
-grid = [
+grid0 = [
   [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
   ['C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C', None, 'C'],
   [None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None, 'N', None],
