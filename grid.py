@@ -61,7 +61,7 @@ class Grid:
                              cords=None,
                              checked=None) -> bool:
 
-        check_grid = self.grid if check_grid is None else check_grid
+        check_grid = self.grid[:] if check_grid is None else check_grid
         checked = checked if checked is not None else []
 
         if cords is None:
