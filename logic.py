@@ -50,8 +50,7 @@ class Game:
                     sleep(0.7)
                     cell = easy_bot_move(self.grid)
                 elif mode == "AI-Hard":
-                    game_copy = Game()
-                    cell = hard_bot_move(self, game_copy)
+                    cell = hard_bot_move(self.grid)
 
                 self.grid.change_cell(cell, self.player2)
                 self.interface.draw_board(self.interface.board)
