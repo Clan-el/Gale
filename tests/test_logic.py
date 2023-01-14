@@ -64,7 +64,7 @@ def test_check_win_random():
     """
     game = Game()
     games = 0
-    max_moves = (game.size//2)*(game.size + 1)
+    max_moves = ((game.size-2)//2)*(game.size - 2 + 1) + 1
     while games <= 100:
         moves = 0
         while moves < max_moves and game.check_win() is None:
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     """
     game = Game()
     games = 0
-    max_moves = (game.size//2)*(game.size + 1)
+    max_moves = ((game.size-2)//2)*(game.size - 2 + 1) + 1
     while games <= 100:
         game.grid.clear_grid()
         moves = 0
