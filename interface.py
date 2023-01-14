@@ -169,6 +169,12 @@ class Interface:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     return
 
+    def wait_for_closing(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+
 
 class Button:
     def __init__(self, screen: pygame.surface.Surface, text: str,
