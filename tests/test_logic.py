@@ -66,6 +66,7 @@ def test_check_win_random():
     grid = Grid("C", "N", 13)
     games = 0
     max_moves = ((grid.size-2)//2)*(grid.size - 2 + 1) + 1
+
     while games <= 100:
         moves = 0
         while moves < max_moves and grid.check_win() is None:
@@ -89,8 +90,8 @@ if __name__ == "__main__":
     grid = Grid("C", "N", 13)
     games = 0
     max_moves = ((grid.size-2)//2)*(grid.size - 2 + 1) + 1
+
     while games <= 100:
-        grid.clear_grid()
         moves = 0
         while moves < max_moves and grid.check_win() is None:
             player = grid.player1 if moves % 2 == 0 else grid.player2
@@ -99,9 +100,9 @@ if __name__ == "__main__":
             moves += 1
         print(grid.check_win(), moves)
         if grid.check_win() is None:
-            pass
-            # game.interface = Interface(game.grid)
-            # game.interface.draw_board(game.interface.board)
+            interface = Interface(grid)
+            interface.draw_board(interface.board)
+            interface.wait_for_closing()
         else:
-            games += 1
+            grid.clear_grid()
         games += 1
