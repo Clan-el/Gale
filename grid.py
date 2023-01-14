@@ -29,10 +29,10 @@ class Grid:
         self.grid[row][column] = player
 
     def _set_grid(self, new_grid):
+        self.size = len(new_grid)
         self.grid = new_grid
-        pass
 
-    def free_cells(self):
+    def free_cells(self) -> list:
         free_cell_list = []
         for row in range(1, self.size - 1):
             for column in range(1, self.size - 1):
