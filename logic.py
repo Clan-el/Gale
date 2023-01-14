@@ -7,7 +7,7 @@ class Game:
     def __init__(self):
         self.player1 = "C"
         self.player2 = "N"
-        self.size = 9  # musi być nieparzyste
+        self.size = 7  # musi być nieparzyste
         self.grid = Grid(self.player1, self.player2, self.size)
 
     def run(self):
@@ -34,6 +34,29 @@ class Game:
                 moves += 1
             return self.grid.check_win()
 
+        elif mode == "test":
+            self.grid.move = 0
+            while True:
+                self.grid.move += 1
+                self.interface.change_caption("Gracz Czerwony")
+                cell = hard_bot_move(self.grid, self.player1, self.interface)
+                self.grid.change_cell(cell, self.player1)
+                self.interface.draw_board(self.interface.board)
+
+                winner = self.grid.check_win()
+                if winner is not None:
+                    return winner
+
+                self.interface.change_caption("Gracz Niebieski zastanawia się")
+                cell = hard_bot_move(self.grid, self.player2, self.interface)
+                self.grid.change_cell(cell, self.player2)
+                self.interface.draw_board(self.interface.board)
+
+                winner = self.grid.check_win()
+                if winner is not None:
+                    return winner
+
+
         else:
             while True:
                 self.interface.change_caption("Gracz Czerwony")
@@ -50,7 +73,7 @@ class Game:
                     sleep(0.7)
                     cell = easy_bot_move(self.grid)
                 elif mode == "AI-Hard":
-                    cell = hard_bot_move(self.grid)
+                    cell = hard_bot_move(self.grid, self.player2, self.interface)
 
                 self.grid.change_cell(cell, self.player2)
                 self.interface.draw_board(self.interface.board)
