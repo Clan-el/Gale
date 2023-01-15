@@ -32,12 +32,15 @@ light_grey = (190, 190, 190)
 
 
 class Interface:
-    def __init__(self, grid: Grid) -> None:
+    def __init__(self) -> None:
         pygame.display.init()
         pygame.font.init()
         pygame.display.set_caption("Shannon switching - Gale")
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.screen.fill(white)
+
+
+    def set_grid(self, grid: Grid):
         self.grid = grid
         self.board = self.clear_board()
 
@@ -99,7 +102,7 @@ class Interface:
         text = "Witaj w GALE!"
         draw_text(self.screen, text, 30, screen_width//2, screen_height//2-200)
         text = "Wybierz tryb gry:"
-        draw_text(self.screen, text, 18, screen_width//2, screen_height//2-100)
+        draw_text(self.screen, text, 18, screen_width//2, screen_height//2-120)
         text = "by Radosław Ślepowroński"
         draw_text(self.screen, text, 18, screen_width//2, screen_height//2+300)
 
@@ -108,9 +111,10 @@ class Interface:
         rect_y = (screen_height - rect_height) // 2 + 2
         rectangle = (rect_x, rect_y, rect_width, rect_height)
 
-        Button1 = Button(self.screen, "2 Graczy", rectangle, -40)
-        Button2 = Button(self.screen, "vs Komputer - Łatwy", rectangle, +30)
-        Button3 = Button(self.screen, "vs Komputer - Trudny", rectangle, +100)
+        Button1 = Button(self.screen, "2 Graczy", rectangle, -70)
+        Button2 = Button(self.screen, "vs Komputer - Łatwy", rectangle, -10)
+        Button3 = Button(self.screen, "vs Komputer - Trudny", rectangle, +50)
+        Button4 = Button(self.screen, "AI vs AI", rectangle, +110)
         pygame.display.flip()
 
         while True:
@@ -124,14 +128,61 @@ class Interface:
                     if Button1.inside(pygame.mouse.get_pos()):
                         return "2_players"
                     elif Button2.inside(pygame.mouse.get_pos()):
-                        # return "test"
                         return "AI-Easy"
                     elif Button3.inside(pygame.mouse.get_pos()):
                         return "AI-Hard"
+                    elif Button4.inside(pygame.mouse.get_pos()):
+                        return "AI-AI"
 
             Button1.above(pygame.mouse.get_pos())
             Button2.above(pygame.mouse.get_pos())
             Button3.above(pygame.mouse.get_pos())
+            Button4.above(pygame.mouse.get_pos())
+
+    def choose_size(self):
+        self.screen.fill(white)
+        self.draw_box(300, 300)
+        text = "Witaj w GALE!"
+        draw_text(self.screen, text, 30, screen_width//2, screen_height//2-200)
+        text = "Wybierz rozmiar planszy:"
+        draw_text(self.screen, text, 18, screen_width//2, screen_height//2-120)
+        text = "by Radosław Ślepowroński"
+        draw_text(self.screen, text, 18, screen_width//2, screen_height//2+300)
+
+        rect_width, rect_height = 210, 45
+        rect_x = (screen_width - rect_width) // 2
+        rect_y = (screen_height - rect_height) // 2 + 2
+        rectangle = (rect_x, rect_y, rect_width, rect_height)
+
+        Button1 = Button(self.screen, "7x7", rectangle, -70)
+        Button2 = Button(self.screen, "9x9", rectangle, -10)
+        Button3 = Button(self.screen, "11x11", rectangle, +50)
+        Button4 = Button(self.screen, "13x13", rectangle, +110)
+        pygame.display.flip()
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+
+                elif (event.type == pygame.MOUSEBUTTONDOWN
+                      and event.button == LEFT):
+
+                    if Button1.inside(pygame.mouse.get_pos()):
+                        return 7
+                    elif Button2.inside(pygame.mouse.get_pos()):
+                        return 9
+                    elif Button3.inside(pygame.mouse.get_pos()):
+                        return 11
+                    elif Button4.inside(pygame.mouse.get_pos()):
+                        return 13
+
+            Button1.above(pygame.mouse.get_pos())
+            Button2.above(pygame.mouse.get_pos())
+            Button3.above(pygame.mouse.get_pos())
+            Button4.above(pygame.mouse.get_pos())
+        pass
+
 
     def clear_screen(self):
         self.screen.fill(white)
@@ -160,6 +211,7 @@ class Interface:
                         return (row, column)
 
     def over(self, winner: str) -> str:
+        pygame.time.delay(200)
         self.endgame_box(winner)
         while True:
             for event in pygame.event.get():
