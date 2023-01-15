@@ -3,7 +3,6 @@ from grid_tests import grid0, gridA, gridB, gridB2
 from time import time
 sys.path.insert(0, '.')
 from grid import Grid
-from logic import Game
 from bot import easy_bot_move, hard_bot_move
 from interface import Interface
 # sys.path.insert(0, '.')
