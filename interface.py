@@ -5,6 +5,20 @@ from grid import Grid
 
 def draw_text(surf: pygame.surface.Surface, text: str,
               size: int, x: int, y: int):
+    """
+    Draws text on the surface
+
+    surf : pygame.surface.Surface
+        surface of display
+    text : str
+        text to draw
+    size : int
+        size of the font
+    x : int
+        x coordinate
+    y : int
+        y coordinate
+    """
 
     font_name = pygame.font.match_font("arial")
     font = pygame.font.Font(font_name, size)
@@ -17,10 +31,9 @@ def draw_text(surf: pygame.surface.Surface, text: str,
 
 # Set the sizes
 screen_width, screen_height = 670, 670
-# offset = 10
 cell_size = 50
 circle_radious = 23
-LEFT = 1
+LEFT = 1  # for the left button of the mouse
 
 # Set the colors for the cells
 white = (255, 255, 255)
@@ -75,17 +88,14 @@ class Interface:
             board.append([white] * self.grid.size)
         return board
 
-    def endgame_box(self, winner) -> None:
-        self.draw_box(350, 110)
-        condition = winner == self.grid.player1
-        winner = "Czerwony" if condition else "Niebieski"
-        text = f"Wygrał gracz {winner}"
-        draw_text(self.screen, text, 18, screen_width//2, screen_height//2-15)
-        text = "Kliknij, aby zagrać ponownie lub wyjdź"
-        draw_text(self.screen, text, 18, screen_width//2, screen_height//2+15)
-        pygame.display.update()
+    def draw_box(self, rect_width: int, rect_height: int):
+        """
+        Draw box for the message that is centered on the screen
 
-    def draw_box(self, rect_width: int, rect_height: int) -> None:
+        rect_width: int
+
+        rect_height: int
+        """
         rect_x = (screen_width - rect_width) // 2
         rect_y = (screen_height - rect_height) // 2
         rectangle = (rect_x, rect_y, rect_width, rect_height)
@@ -95,6 +105,9 @@ class Interface:
         pygame.draw.rect(*param)
 
     def choose_mode(self) -> str:
+        """
+        Displays the options of the mode to choose and waits for the decision
+        """
         pygame.display.set_caption("Shannon switching - Gale")
         self.screen.fill(white)
         self.draw_box(300, 300)
@@ -138,7 +151,10 @@ class Interface:
             Button3.above(pygame.mouse.get_pos())
             Button4.above(pygame.mouse.get_pos())
 
-    def choose_size(self):
+    def choose_size(self) -> int:
+        """
+        Displays the options of the size to choose and waits for the decision
+        """
         self.screen.fill(white)
         self.draw_box(300, 300)
         text = "Witaj w GALE!"
@@ -182,10 +198,16 @@ class Interface:
             Button4.above(pygame.mouse.get_pos())
 
     def clear_screen(self):
+        """
+        Makes screen white and prepares for the next round
+        """
         self.screen.fill(white)
         self.board = self.clear_board()
 
-    def get_click(self) -> str:
+    def get_click(self) -> tuple[int, int]:
+        """
+        Waits for player mouse click to cecide which cell was clicked
+        """
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -207,9 +229,24 @@ class Interface:
 
                         return (row, column)
 
-    def over(self, winner: str) -> str:
+    def over(self, winner: str):
+        """
+        Displays the victory announcement and waits for decision about closing
+        or playing again
+
+        winner : str
+            player that has won the game
+        """
         pygame.time.delay(200)
-        self.endgame_box(winner)
+        self.draw_box(350, 110)
+        condition = winner == self.grid.player1
+        winner = "Czerwony" if condition else "Niebieski"
+        text = f"Wygrał gracz {winner}"
+        draw_text(self.screen, text, 18, screen_width//2, screen_height//2-15)
+        text = "Kliknij, aby zagrać ponownie lub wyjdź"
+        draw_text(self.screen, text, 18, screen_width//2, screen_height//2+15)
+        pygame.display.update()
+
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -219,6 +256,9 @@ class Interface:
                     return
 
     def wait_for_closing(self):
+        """
+        Waits for closing the window
+        """
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -229,6 +269,19 @@ class Button:
     def __init__(self, screen: pygame.surface.Surface, text: str,
                  rectangle: tuple[int, int, int, int], offset: int):
 
+        """
+        Initializes the button parameters that are in the middle
+        of the horizontal dimension of the screen and leveled by offset
+
+        screen : pygame.surface.Surface
+            surface of the display
+        text : str
+            text that will be shown on the button
+        rectangle : tuple[int, int, int, int]
+            sizes of the button
+        offset : int
+            vertical offset of the button
+        """
         rect_x, rect_y, rect_width, rect_height = rectangle
         rect_y += offset
         self.rectangle = rect_x, rect_y, rect_width, rect_height
@@ -238,22 +291,40 @@ class Button:
 
         self.draw_button(white)
 
+    def draw_button(self, color: tuple[int, int, int]):
+        """
+        Draws an inactive button
+
+        color : tuple[int, int, int]
+            color of the inside of the button
+        """
+        pygame.draw.rect(self.screen, color, self.rectangle, 0, 20)
+        self.area = pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
+        draw_text(self.screen, self.text, 18, screen_width//2,
+                  screen_height//2+self.offset)
+        pygame.display.update()
+
     def inside(self, mouse: tuple[int, int]) -> bool:
+        """
+        Checks if mouse click was in the button and colors clicked button
+
+        mouse : tuple[int, int]
+            co-ordinates of the mouse
+        """
         if self.area.collidepoint(mouse):
             self.draw_button(blue)
             pygame.time.delay(333)
             return True
         return False
 
-    def above(self, mouse: tuple[int, int]) -> None:
+    def above(self, mouse: tuple[int, int]):
+        """
+        Changes the button color if mouse is above the button
+
+        mouse : tuple[int, int]
+            co-ordinates of the mouse
+        """
         if self.area.collidepoint(mouse):
             self.draw_button(red)
         else:
             self.draw_button(white)
-
-    def draw_button(self, color: tuple[int, int, int]):
-        pygame.draw.rect(self.screen, color, self.rectangle, 0, 20)
-        self.area = pygame.draw.rect(self.screen, black, self.rectangle, 2, 20)
-        draw_text(self.screen, self.text, 18, screen_width//2,
-                  screen_height//2+self.offset)
-        pygame.display.update()

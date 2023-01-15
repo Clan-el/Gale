@@ -9,14 +9,31 @@ seed(now.minute ** now.second - now.microsecond)
 
 
 def my_copy(array):
+    """
+    Makes a copy of an 2 dimensional array
+    """
     return [[elem for elem in sublist] for sublist in array]
 
 
 def easy_bot_move(grid: Grid) -> tuple[int, int]:
+    """
+    Chooses random move from the all possible moves
+    """
     return choice(grid.free_cells())
 
 
-def hard_bot_move(grid: Grid, player, interface: Interface = None):
+def hard_bot_move(grid: Grid, player: str, interface: Interface = None):
+    """
+    Chooses the best known move based on many simulations
+    and shows the choosing progress
+
+    grid : Grid
+
+    player : str
+        player that is being tested
+    interface : Interface
+        to show the progress in the caption
+    """
     available_moves = grid.free_cells()
     best_move = None
     best_score = float('-inf')
@@ -39,7 +56,19 @@ def hard_bot_move(grid: Grid, player, interface: Interface = None):
     return best_move
 
 
-# def monte_carlo_tree_search(grid: Grid, player, simulations):
+# def monte_carlo_tree_search(grid: Grid,
+#                             player: str,
+#                             simulations: int) -> float:
+#     """
+#     Checks possible outcomes of the move by running simulations
+
+#     grid : Grid
+
+#     player : str
+#         player that is being checked
+#     simulations : int
+#         number of simulations to run
+#     """
 #     wins = 0
 #     for _ in range(simulations):
 #         # grid_copy = Grid(grid.player1, grid.player2, grid.size)
@@ -53,17 +82,45 @@ def hard_bot_move(grid: Grid, player, interface: Interface = None):
 #     return wins / simulations
 
 
-def monte_carlo_tree_search(grid: Grid, player, simulations):
+def monte_carlo_tree_search(grid: Grid,
+                            player: str,
+                            simulations: int) -> float:
+    """
+    Checks possible outcomes of the move by running simulations
+
+    grid : Grid
+
+    player : str
+        player that is being checked
+    simulations : int
+        number of simulations to run
+    """
     wins = 0
     with multiprocessing.Pool() as pool:
         arguments = (my_copy(grid.grid), grid.player1,
                      grid.player2, grid.size, player)
+
         list_comp = [arguments for _ in range(simulations)]
         wins = sum(pool.map(simulate_random_game, list_comp))
     return wins / simulations
 
 
-def simulate_random_game(args):
+def simulate_random_game(args: tuple[list, str, str, int, str]) -> int:
+    """
+    Simulates random game and returns 1 if game is won by the player
+
+    args :
+        grid_copy : list of lists of (str or None)
+
+        player1 : str
+
+        player2 : str
+
+        size : int
+            size of the orginal grid
+        player : str
+            player that is being checked
+    """
     grid_copy, player1, player2, size, player = args
     current_player = player
     grid = Grid(player1, player2, size)

@@ -1,4 +1,18 @@
 class Grid:
+    """
+    A class to represent the Grid
+
+    ...
+
+    Atributes
+    ---------
+    player1 : str
+        name of player1
+    player2 : str
+        name of player2
+    size: int
+        one dimensional size of the square grid
+    """
     def __init__(self, player1, player2, size) -> None:
         self.player1 = player1
         self.player2 = player2
@@ -6,6 +20,9 @@ class Grid:
         self.clear_grid()
 
     def clear_grid(self):
+        """
+        Creates a clear grid with given size and players
+        """
         grid = []
         for _ in range(self.size):
             grid.append([None] * self.size)
@@ -19,20 +36,35 @@ class Grid:
         self.grid = grid
 
     def get_grid(self) -> list[list[str | None]]:
+        """
+        Returns a grid
+        """
         return self.grid
 
-    def get_cell(self, point: tuple[int, int]) -> str | None:
-        return self.grid[point[0]][point[1]]
+    def get_cell(self, cell: tuple[int, int]) -> str | None:
+        """
+        Returns a value of the cell
+        """
+        return self.grid[cell[0]][cell[1]]
 
-    def change_cell(self, point: tuple[int, int], player: str):
-        row, column = point
+    def change_cell(self, cell: tuple[int, int], player: str | None):
+        """
+        Changes the value of the specific cell
+        """
+        row, column = cell
         self.grid[row][column] = player
 
     def set_grid(self, new_grid):
+        """
+        Sets a different grid
+        """
         self.size = len(new_grid)
         self.grid = new_grid
 
-    def free_cells(self) -> list:
+    def free_cells(self) -> list[tuple[int, int]]:
+        """
+        Returns a list of free cells / possible moves
+        """
         free_cell_list = []
         for row in range(1, self.size - 1):
             for column in range(1, self.size - 1):
@@ -41,11 +73,15 @@ class Grid:
         return free_cell_list
 
     def check_near_connection(self,
-                              point: tuple[int, int],
+                              cell: tuple[int, int],
                               player: str,
-                              check_grid=None) -> list:
+                              check_grid=None) -> list[tuple[int, int]]:
+        """
+        Checks if cell has vertical and horizontal neighbors and returns
+        a list of max 4 cells
+        """
 
-        row, column = point
+        row, column = cell
         check_grid = self.grid if check_grid is None else check_grid
         check_list = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 
@@ -60,6 +96,13 @@ class Grid:
                              check_grid=None,
                              cords=None,
                              checked=None) -> bool:
+
+        """
+        Checks if given player connected his opposite sites of the grid
+        and returns bool
+        Uses recursion if cell has more than 2 neighbors
+        If checked player2 the check_grid is rotated counter clockwise
+        """
 
         check_grid = self.grid[:] if check_grid is None else check_grid
         checked = checked if checked is not None else []
@@ -135,6 +178,9 @@ class Grid:
                 return True
 
     def check_win(self) -> str | None:
+        """
+        Checks if any of players have won and if so returns winner
+        """
         if self.check_win_connection(self.player1):
             return self.player1
         elif self.check_win_connection(self.player2):

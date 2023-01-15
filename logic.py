@@ -5,11 +5,40 @@ from time import sleep
 
 
 class Game:
+    """
+    A class to represent a Game.
+
+    Attributes
+    ----------
+    player1 : str
+        name of player1
+    player2 : str
+        name of player2
+    interface : Interface
+        window to represent a game
+    grid : Grid
+        grid of the game
+
+    Methods
+    -------
+    run():
+        creates interface
+        creates a loop of game
+    play(mode, size):
+        sequence of taking moves and giving grid to interface
+    """
     def __init__(self):
+        """
+        Initializes the players for the game
+        """
         self.player1 = "C"
         self.player2 = "N"
 
     def run(self):
+        """
+        Initializes the interface and create a while loop of taking
+        the settings, playing and showing the winner
+        """
         self.interface = Interface()
         while True:
             mode = self.interface.choose_mode()
@@ -17,7 +46,18 @@ class Game:
             winner = self.play(mode, size)
             self.interface.over(winner)
 
-    def play(self, mode, size):
+    def play(self, mode: str, size: int) -> str:
+        """
+        Sequence of taking and showing players decisions
+
+        : param mode : has to be from ['2_players', '"AI-AI',
+                                     'AI-Easy', 'AI-Hard']
+        : type mode : str
+
+        : param size : has to be odd and more than 5
+
+        : type size : int
+        """
         self.grid = Grid(self.player1, self.player2, size)
         self.interface.set_grid(self.grid)
         self.interface.clear_screen()
@@ -36,9 +76,7 @@ class Game:
             return self.grid.check_win()
 
         elif mode == "AI-AI":
-            self.grid.move = 0
             while True:
-                self.grid.move += 1
                 self.interface.change_caption("Gracz Czerwony")
                 cell = hard_bot_move(self.grid, self.player1, self.interface)
                 self.grid.change_cell(cell, self.player1)
