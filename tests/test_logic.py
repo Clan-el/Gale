@@ -88,7 +88,7 @@ if __name__ == "__main__":
     """
     Analogiczne do test_check_win_random, ale z reprezentacją graficzną siatki
     """
-    grid = Grid("C", "N", 7)
+    grid = Grid("C", "N", 9)
     games = 0
     max_moves = ((grid.size-2)//2)*(grid.size - 2 + 1) + 1
 
