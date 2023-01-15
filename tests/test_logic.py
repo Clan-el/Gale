@@ -1,9 +1,10 @@
 import sys
 from grid_tests import grid0, gridA, gridB, gridB2
+from time import time
 sys.path.insert(0, '.')
 from grid import Grid
 from logic import Game
-from bot import easy_bot_move
+from bot import easy_bot_move, hard_bot_move
 from interface import Interface
 # sys.path.insert(0, '.')
 
@@ -87,18 +88,23 @@ if __name__ == "__main__":
     """
     Analogiczne do test_check_win_random, ale z reprezentacją graficzną siatki
     """
-    grid = Grid("C", "N", 13)
+    grid = Grid("C", "N", 7)
     games = 0
     max_moves = ((grid.size-2)//2)*(grid.size - 2 + 1) + 1
 
-    while games <= 100:
+    while games <= 10:
         moves = 0
+        initialTime = time()
         while moves < max_moves and grid.check_win() is None:
             player = grid.player1 if moves % 2 == 0 else grid.player2
-            cell_cords = easy_bot_move(grid)
+            # cell_cords = easy_bot_move(grid)
+            cell_cords = hard_bot_move(grid, player)
             grid.change_cell(cell_cords, player)
             moves += 1
+
         print(grid.check_win(), moves)
+        print(time() - initialTime)
+
         if grid.check_win() is None:
             interface = Interface(grid)
             interface.draw_board(interface.board)
