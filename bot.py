@@ -7,6 +7,7 @@ import multiprocessing
 now = datetime.now()
 seed(now.minute ** now.second - now.microsecond)
 
+
 def my_copy(array):
     return [[elem for elem in sublist] for sublist in array]
 
@@ -15,11 +16,10 @@ def easy_bot_move(grid: Grid) -> tuple[int, int]:
     return choice(grid.free_cells())
 
 
-def hard_bot_move(grid: Grid, player, interface: Interface=None):
+def hard_bot_move(grid: Grid, player, interface: Interface = None):
     available_moves = grid.free_cells()
     best_move = None
     best_score = float('-inf')
-    # difficulty_factor = 0.7
     simulations = 1600 - 9*grid.size**2
 
     for count, move in enumerate(available_moves):
@@ -27,20 +27,15 @@ def hard_bot_move(grid: Grid, player, interface: Interface=None):
 
         if interface is not None:
             full_player = "Czerwony" if player == grid.player1 else "Niebieski"
-            text = f"Gracz {full_player} główkuje: {percent:.2f}%"  # tura {grid.move}
+            text = f"Gracz {full_player} główkuje: {percent:.2f}%"
             interface.change_caption(text)
 
         grid.change_cell(move, player)
         score = monte_carlo_tree_search(grid, player, simulations)
         grid.change_cell(move, None)
-        # print(score)
         if score > best_score:
             best_score = score
             best_move = move
-        # if best_score > difficulty_factor:
-        #     # print(best_move)
-        #     return best_move
-    # print(best_score, best_move)
     return best_move
 
 
@@ -82,4 +77,3 @@ def simulate_random_game(args):
         return 1
     else:
         return 0
-

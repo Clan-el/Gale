@@ -39,7 +39,6 @@ class Interface:
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.screen.fill(white)
 
-
     def set_grid(self, grid: Grid):
         self.grid = grid
         self.board = self.clear_board()
@@ -181,8 +180,6 @@ class Interface:
             Button2.above(pygame.mouse.get_pos())
             Button3.above(pygame.mouse.get_pos())
             Button4.above(pygame.mouse.get_pos())
-        pass
-
 
     def clear_screen(self):
         self.screen.fill(white)

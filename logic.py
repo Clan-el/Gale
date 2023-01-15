@@ -3,6 +3,7 @@ from interface import Interface
 from bot import easy_bot_move, hard_bot_move
 from time import sleep
 
+
 class Game:
     def __init__(self):
         self.player1 = "C"
@@ -25,8 +26,8 @@ class Game:
         if mode == "2_players":
             moves = 0
             while self.grid.check_win() is None:
-                text = "Gracz Czerwony" if moves % 2 == 0 else "Gracz Niebieski"
-                self.interface.change_caption(text)
+                txt = "Gracz Czerwony" if moves % 2 == 0 else "Gracz Niebieski"
+                self.interface.change_caption(txt)
                 cell = self.interface.get_click()
                 player = self.player1 if moves % 2 == 0 else self.player2
                 self.grid.change_cell(cell, player)
@@ -47,7 +48,6 @@ class Game:
                 if winner is not None:
                     return winner
 
-                # self.interface.change_caption("Gracz Niebieski zastanawia się")
                 cell = hard_bot_move(self.grid, self.player2, self.interface)
                 self.grid.change_cell(cell, self.player2)
                 self.interface.draw_board(self.interface.board)
@@ -55,7 +55,6 @@ class Game:
                 winner = self.grid.check_win()
                 if winner is not None:
                     return winner
-
 
         else:
             while True:
@@ -68,12 +67,14 @@ class Game:
                 if winner is not None:
                     return winner
 
-                # self.interface.change_caption("Gracz Niebieski zastanawia się")
                 if mode == "AI-Easy":
+                    text = "Gracz Niebieski zastanawia się"
+                    self.interface.change_caption(text)
                     sleep(0.7)
                     cell = easy_bot_move(self.grid)
                 elif mode == "AI-Hard":
-                    cell = hard_bot_move(self.grid, self.player2, self.interface)
+                    args = self.grid, self.player2, self.interface
+                    cell = hard_bot_move(*args)
 
                 self.grid.change_cell(cell, self.player2)
                 self.interface.draw_board(self.interface.board)
