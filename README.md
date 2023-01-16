@@ -45,21 +45,18 @@ Grę można opuścić poprzez klknięcie czerwonego X w prawym górnym rogu okna
 
  `bot.py` - zawiera w sobie algorytmy decydujące o ruchu gracza komputerowego
 
-`test_grid.py` - odpowiada za testowanie metod klasy Grid
+ `test_grid.py` - odpowiada za testowanie metod klasy Grid
 
-`grid_test.py` - zawiera w sobie zapis przykładowych siatek stworzonych do testów
+ `grid_test.py` - zawiera w sobie zapis przykładowych siatek stworzonych do testów
 
-## Opis klas użytych w projekcie
-
-@TODO
 
 # Refleksje na temat projektu
 
 Projekt uważam za udany. Oczywiście można by go rozbudować o funkcje i wybory, np. jaki kolor rozpoczyna grę albo usprawnić działanie trudnego bota, ale to już są zabiegi kosmetyczne, które można zmienić w razie potrzeby. Pewnie udałoby się jakoś zoptymalizować metodę do sprawdzania warunku zwycięstwa.
 
-Najbardziej jestem zadowolony z działania bota trudnego (AI), który przebył sporą drogę jeśli chodzi o sposób działania, a co ważniejsze o prędkość podejmowania decyzji. Początkowo AI vs AI na planszy 13x13 zajmowało zbyt sporo czasu, potem przez zastosowanie algorytmu `monte_carlo_tree_search` i `multiprocessingu` udało się skrócić rozgrywkę do około 3 minut. Następnie poprzez zmienienie `deepcopy()` na `my_copy()`, które znajduje się w pliku bot.py osiągnąłem czas rozgrywki około minuty, który utrzymuje się do tej pory. Trudność AI można zmieniać w kodzie porzez zmianę zmiennej `simulations` - im jest większa tym lepsze będzie AI, ale też więcej czasu będzie jej zajmować podejmowanie decyzji.
+Najbardziej jestem zadowolony z działania bota trudnego (AI), który przebył sporą drogę jeśli chodzi o sposób działania, a co ważniejsze o prędkość podejmowania decyzji. Początkowo AI vs AI na planszy 13x13 zajmowało zbyt sporo czasu, potem przez zastosowanie algorytmu `monte_carlo_tree_search()` i `multiprocessingu` udało się skrócić rozgrywkę do około 3 minut. Następnie poprzez zmienienie `deepcopy()` na `my_copy()`, które znajduje się w pliku bot.py osiągnąłem czas rozgrywki około minuty, który utrzymuje się do tej pory. Trudność AI można zmieniać w kodzie porzez zmianę zmiennej `simulations` - im jest większa tym lepsze będzie AI, ale też więcej czasu będzie jej zajmować podejmowanie decyzji.
 
-Mam też mały problem. Mianowicie podczas wyświetlania w PyGame rozgrywki AI-AI w funkcji `monte_carlo_tree_search()` program się czasami zawiesza w funkcji `pool.map()` z oczekiwaniem na zsynchronizowanie wszystkich dzieci. Co ciekawe dzieje się to tylko podczas jednoczesnego korzystania z PyGame i `multiprocessingu`, ponieważ w testach nie występują żadne błędy wskazujące na błędny algorytm sprawdzania wygranej `check_win_connection()`. Problem ten brutalnie rozwiązałem przy użyciu dekoratora `timeout()` który poprzez rzucenie wyjątku `TimeoutError` ponownie inicjalizuje `multiprocessing` w `monte_carlo_tree_search()` po przekroczeniu wyznaczonego czasu, aż do momentu gdy nie uda się pomyślnie zakończyć wszystich symulacji i ich zsynchronizować. U mnie już działa : )
+Mam też mały problem. Mianowicie podczas wyświetlania w PyGame rozgrywki AI-AI w funkcji `monte_carlo_tree_search()` program się czasami zawiesza w funkcji `pool.map()` z oczekiwaniem na zsynchronizowanie wszystkich dzieci. Co ciekawe dzieje się to tylko podczas jednoczesnego korzystania z PyGame i `multiprocessingu`, ponieważ w testach nie występują żadne błędy wskazujące na błędny algorytm sprawdzania wygranej `check_win_connection()`. Problem ten brutalnie rozwiązałem przy użyciu dekoratora `timeout()` który poprzez rzucenie wyjątku `TimeoutError` ponownie inicjalizuje `multiprocessing` w `monte_carlo_tree_search()` po przekroczeniu wyznaczonego czasu, aż do momentu gdy nie uda się pomyślnie zakończyć wszystich symulacji i ich zsynchronizować. U mnie już działa :)
 
 Jednakże czasami po wywołaniu wyjątku `TimeoutError` jest problem z zamknięciem gry przez czerwonego X i trzeba wyłączyć program w terminalu. Menu i dalsza gra wciąż jednak działa, problem jest tylko z zamknięciem.
 
