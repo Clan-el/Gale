@@ -1,92 +1,66 @@
 # Gale
 
+## Informacje o projekcie
+
+Celem projektu było stworzenie gry Shannon Switching w wariancie Gale między człowiekiem a graczem komputerowym o dwóch poziomach trudności.
+
+Gra została wykonana przy użyciu interfejsu okienkowego.
+
+# Ogólne informacje
+
+Sterowanie w całej grze odbywa się za pomocą myszki i jej lewego przycisku.
+
+Grę włącza się poprzez uruchomienie pliku `gale.py`, a po kilku sekundach ukazuje się okienko powitalne wraz z menu.
+
+W menu do wyboru są cztery tryby gry:
++ 2 graczy
++ Gracz vs Komputer poziom łatwy - całkowicie losowe ruchy
++ Gracz vs Komputer poziom trudny - wybiera najlepszy znany botowi ruch
++ Komputer poziom trudny vs Komputer poziom trudny
+
+Oraz cztery rozmiary planszy:
++ 7x7
++ 9x9
++ 11x11
++ 13x13
+
+Następnie rozpoczyna się rozgrywka na planszy, każdy gracz wybiera pole do umieszczenia swojego pionka. Grę rozpoczyna gracz Czerwony, którego zadaniem jest połączyć lewy i prawy bok kwadratu, natomiast Niebieskiego - górny i dolny.
+
+Na pasku tytułowym wyświetlane jest kto wykonuje teraz ruch, a w przypadku ruchów graczy komputerowych widoczna jest również procentowa informacja o postępie procesu myślenia.
+
+Gra toczy się do momentu zwycięstwa któregoś z graczy, gdyż ten wariant gry nie może zakończyć się remisem. W momencie zakończenia gry wyświetli się komunikat przedstawiający zwycięzcę aktualnej rozgrywki. Kliknięcie myszką w oknie spowoduje powrót do menu i ponownego wyboru trybu gry.
+
+Grę można opuścić poprzez klknięcie czerwonego X w prawym górnym rogu okna.
 
 
-## Getting started
+## Podział projektu na następujące moduły
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+ `gale.py` - główny plik uruchamiający rozgrywkę
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+ `logic.py` - odpowiada za przeprowadzenie rozgrywki w odpowiedniej sekwencji
 
-## Add your files
+ `grid.py` - odpowiada za generowanie i modyfikację siatki oraz sprawdzanie, czy któryś z graczy zwyciężył
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+ `interface.py` - odpowiada za wyświetlanie menu oraz rozgrywki, a także za pobieranie informacji o decyzji gracza. Został tu wykorzystany PyGame.
 
-```
-cd existing_repo
-git remote add origin https://gitlab-stud.elka.pw.edu.pl/rslepowr/gale.git
-git branch -M main
-git push -uf origin main
-```
+ `bot.py` - zawiera w sobie algorytmy decydujące o ruchu gracza komputerowego
 
-## Integrate with your tools
+`test_grid.py` - odpowiada za testowanie metod klasy Grid
 
-- [ ] [Set up project integrations](https://gitlab-stud.elka.pw.edu.pl/rslepowr/gale/-/settings/integrations)
+`grid_test.py` - zawiera w sobie zapis przykładowych siatek stworzonych do testów
 
-## Collaborate with your team
+## Opis klas użytych w projekcie
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+@TODO
 
-## Test and Deploy
+# Refleksje na temat projektu
 
-Use the built-in continuous integration in GitLab.
+Projekt uważam za udany. Oczywiście można by go rozbudować o funkcje i wybory, np. jaki kolor rozpoczyna grę albo usprawnić działanie trudnego bota, ale to już są zabiegi kosmetyczne, które można zmienić w razie potrzeby. Pewnie udałoby się jakoś zoptymalizować metodę do sprawdzania warunku zwycięstwa.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Najbardziej jestem zadowolony z działania bota trudnego (AI), który przebył sporą drogę jeśli chodzi o sposób działania, a co ważniejsze o prędkość podejmowania decyzji. Początkowo AI vs AI na planszy 13x13 zajmowało zbyt sporo czasu, potem przez zastosowanie algorytmu `monte_carlo_tree_search` i `multiprocessingu` udało się skrócić rozgrywkę do około 3 minut. Następnie poprzez zmienienie `deepcopy()` na `my_copy()`, które znajduje się w pliku bot.py osiągnąłem czas rozgrywki około minuty, który utrzymuje się do tej pory. Trudność AI można zmieniać w kodzie porzez zmianę zmiennej `simulations` - im jest większa tym lepsze będzie AI, ale też więcej czasu będzie jej zajmować podejmowanie decyzji.
 
-***
+Mam też mały problem. Mianowicie podczas wyświetlania w PyGame rozgrywki AI-AI w funkcji `monte_carlo_tree_search()` program się czasami zawiesza w funkcji `pool.map()` z oczekiwaniem na zsynchronizowanie wszystkich dzieci. Co ciekawe dzieje się to tylko podczas jednoczesnego korzystania z PyGame i `multiprocessingu`, ponieważ w testach nie występują żadne błędy wskazujące na błędny algorytm sprawdzania wygranej `check_win_connection()`. Problem ten brutalnie rozwiązałem przy użyciu dekoratora `timeout()` który poprzez rzucenie wyjątku `TimeoutError` ponownie inicjalizuje `multiprocessing` w `monte_carlo_tree_search()` po przekroczeniu wyznaczonego czasu, aż do momentu gdy nie uda się pomyślnie zakończyć wszystich symulacji i ich zsynchronizować. U mnie już działa : )
 
-# Editing this README
+Jednakże czasami po wywołaniu wyjątku `TimeoutError` jest problem z zamknięciem gry przez czerwonego X i trzeba wyłączyć program w terminalu. Menu i dalsza gra wciąż jednak działa, problem jest tylko z zamknięciem.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Na pewno ten projekt rozbudził moje zainteresowine w zakresie programowania w Pythonie i w przyszłości planuję zająć się jakimiś podstawami sztucznej inteligencji.
