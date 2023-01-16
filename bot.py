@@ -65,7 +65,8 @@ def hard_bot_move(grid: Grid, player: str, interface: Interface = None):
     available_moves = grid.free_cells()
     best_move = None
     best_score = float('-inf')
-    simulations = 1600 - 9*grid.size**2
+    simulations_dic = {7: 5000, 9: 4000, 11: 1500, 13: 400}
+    simulations = simulations_dic[grid.size]
 
     for count, move in enumerate(available_moves):
         percent = ((count*100)/len(available_moves))
@@ -84,56 +85,7 @@ def hard_bot_move(grid: Grid, player: str, interface: Interface = None):
     return best_move
 
 
-# def monte_carlo_tree_search(grid: Grid,
-#                             player: str,
-#                             simulations: int) -> float:
-#     """
-#     Checks possible outcomes of the move by running simulations
-
-#     grid : Grid
-
-#     player : str
-#         player that is being checked
-#     simulations : int
-#         number of simulations to run
-#     """
-#     wins = 0
-#     for _ in range(simulations):
-#         # grid_copy = Grid(grid.player1, grid.player2, grid.size)
-#         # grid_copy.set_grid([row[:] for row in grid.get_grid()])
-#         arguments = (my_copy(grid.grid), grid.player1,
-#                      grid.player2, grid.size, player)
-
-#         winner = simulate_random_game(arguments)
-#         if winner == 1:
-#             wins += 1
-#     return wins / simulations
-
-
-# def monte_carlo_tree_search(grid: Grid,
-#                             player: str,
-#                             simulations: int) -> float:
-#     """
-#     Checks possible outcomes of the move by running simulations
-
-#     grid : Grid
-
-#     player : str
-#         player that is being checked
-#     simulations : int
-#         number of simulations to run
-#     """
-#     wins = 0
-#     with multiprocessing.Pool() as pool:
-#         arguments = (my_copy(grid.grid), grid.player1,
-#                      grid.player2, grid.size, player)
-
-#         list_comp = [arguments for _ in range(simulations)]
-#         wins = sum(pool.map(simulate_random_game, list_comp))
-#     return wins / simulations
-
-
-@timeout(5)
+@timeout(1)
 def monte_carlo_tree_search(grid: Grid,
                             player: str,
                             simulations: int) -> float:
@@ -147,19 +99,24 @@ def monte_carlo_tree_search(grid: Grid,
     simulations : int
         number of simulations to run
     """
-    try:
-        wins = 0
-        with multiprocessing.Pool() as pool:
-            arguments = (my_copy(grid.grid), grid.player1,
-                         grid.player2, grid.size, player)
+    while True:
+        try:
+            wins = 0
+            with multiprocessing.Pool() as pool:
+                arguments = (my_copy(grid.grid), grid.player1,
+                             grid.player2, grid.size, player)
 
-            wins = sum(pool.map(simulate_random_game,
-                                [arguments for _ in range(simulations)]))
+                wins = sum(pool.map(simulate_random_game,
+                                    [arguments for _ in range(simulations)]))
 
-            pool.terminate()
-    except TimeoutError:
-        pool.terminate()
-        return 0
+                # pool.terminate()
+                # pool.close()
+                break
+        except TimeoutError:
+            # pool.terminate()
+            # pool.close()
+            continue
+            # return 0.5
     return wins / simulations
 
 
