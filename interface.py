@@ -49,7 +49,7 @@ class Interface:
         pygame.display.init()
         pygame.font.init()
         pygame.display.set_caption("Shannon switching - Gale")
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
+        self.screen = pygame.display.set_mode((screen_width, screen_height), 0)
         self.screen.fill(white)
 
     def set_grid(self, grid: Grid):
