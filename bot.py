@@ -3,9 +3,37 @@ from datetime import datetime
 from grid import Grid
 from interface import Interface
 import multiprocessing
+import errno
+import os
+import signal
+import functools
 
 now = datetime.now()
 seed(now.minute ** now.second - now.microsecond)
+
+
+class TimeoutError(Exception):
+    pass
+
+
+def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
+    def decorator(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+            return result
+
+        return wrapper
+
+    return decorator
 
 
 def my_copy(array):
@@ -82,6 +110,30 @@ def hard_bot_move(grid: Grid, player: str, interface: Interface = None):
 #     return wins / simulations
 
 
+# def monte_carlo_tree_search(grid: Grid,
+#                             player: str,
+#                             simulations: int) -> float:
+#     """
+#     Checks possible outcomes of the move by running simulations
+
+#     grid : Grid
+
+#     player : str
+#         player that is being checked
+#     simulations : int
+#         number of simulations to run
+#     """
+#     wins = 0
+#     with multiprocessing.Pool() as pool:
+#         arguments = (my_copy(grid.grid), grid.player1,
+#                      grid.player2, grid.size, player)
+
+#         list_comp = [arguments for _ in range(simulations)]
+#         wins = sum(pool.map(simulate_random_game, list_comp))
+#     return wins / simulations
+
+
+@timeout(5)
 def monte_carlo_tree_search(grid: Grid,
                             player: str,
                             simulations: int) -> float:
@@ -95,13 +147,19 @@ def monte_carlo_tree_search(grid: Grid,
     simulations : int
         number of simulations to run
     """
-    wins = 0
-    with multiprocessing.Pool() as pool:
-        arguments = (my_copy(grid.grid), grid.player1,
-                     grid.player2, grid.size, player)
+    try:
+        wins = 0
+        with multiprocessing.Pool() as pool:
+            arguments = (my_copy(grid.grid), grid.player1,
+                         grid.player2, grid.size, player)
 
-        list_comp = [arguments for _ in range(simulations)]
-        wins = sum(pool.map(simulate_random_game, list_comp))
+            wins = sum(pool.map(simulate_random_game,
+                                [arguments for _ in range(simulations)]))
+
+            pool.terminate()
+    except TimeoutError:
+        pool.terminate()
+        return 0
     return wins / simulations
 
 
@@ -121,15 +179,18 @@ def simulate_random_game(args: tuple[list, str, str, int, str]) -> int:
         player : str
             player that is being checked
     """
+
     grid_copy, player1, player2, size, player = args
     current_player = player
     grid = Grid(player1, player2, size)
     grid.set_grid(grid_copy)
+
     while grid.check_win() is None and grid.free_cells():
         available_moves = grid.free_cells()
         move = choice(available_moves)
         grid.change_cell(move, current_player)
         current_player = player1 if current_player == player2 else player2
+
     if grid.check_win() == player:
         return 1
     else:
