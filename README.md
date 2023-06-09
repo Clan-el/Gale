@@ -4,7 +4,9 @@
 
 Celem projektu było stworzenie gry Shannon Switching w wariancie Gale między człowiekiem a graczem komputerowym o dwóch poziomach trudności.
 
-Gra została wykonana przy użyciu interfejsu okienkowego.
+Gra została wykonana przy użyciu interfejsu okienkowego Pygame. Aby go zainstalować na Ubuntu należy wpisać w terminalu następującą komendę:
+
+`sudo apt-get install python3-pygame`
 
 # Ogólne informacje
 
