@@ -132,6 +132,7 @@ class Interface:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.quit()
                     exit()
 
                 elif (event.type == pygame.MOUSEBUTTONDOWN
@@ -178,6 +179,7 @@ class Interface:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.quit()
                     exit()
 
                 elif (event.type == pygame.MOUSEBUTTONDOWN
@@ -211,6 +213,7 @@ class Interface:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.quit()
                     exit()
 
                 elif (event.type == pygame.MOUSEBUTTONDOWN
@@ -250,6 +253,7 @@ class Interface:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.quit()
                     exit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -262,7 +266,17 @@ class Interface:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.quit()
                     exit()
+
+    def check_for_closing(self):
+        """
+        Waits for closing the window
+        """
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
 
 class Button:

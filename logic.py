@@ -81,6 +81,7 @@ class Game:
                 cell = hard_bot_move(self.grid, self.player1, self.interface)
                 self.grid.change_cell(cell, self.player1)
                 self.interface.draw_board(self.interface.board)
+                self.interface.check_for_closing()
 
                 winner = self.grid.check_win()
                 if winner is not None:
@@ -89,6 +90,7 @@ class Game:
                 cell = hard_bot_move(self.grid, self.player2, self.interface)
                 self.grid.change_cell(cell, self.player2)
                 self.interface.draw_board(self.interface.board)
+                self.interface.check_for_closing()
 
                 winner = self.grid.check_win()
                 if winner is not None:
@@ -113,6 +115,7 @@ class Game:
                 elif mode == "AI-Hard":
                     args = self.grid, self.player2, self.interface
                     cell = hard_bot_move(*args)
+                    
 
                 self.grid.change_cell(cell, self.player2)
                 self.interface.draw_board(self.interface.board)
